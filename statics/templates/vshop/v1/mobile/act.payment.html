@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+    <title>付款详情</title>
+    <meta content="app-id=518966501" name="apple-itunes-app" />
+    <meta content="yes" name="apple-mobile-web-app-capable" />
+    <meta content="black" name="apple-mobile-web-app-status-bar-style" />
+    <meta content="telephone=no" name="format-detection" />
+    <meta http-equiv="Cache-Control" content="no-cache" />
+    <meta http-equiv="pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="-1">
+    <link href="{G_TEMPLATES_CSS}/mobile/comm.css" rel="stylesheet" type="text/css" />
+    <link href="{G_TEMPLATES_CSS}/mobile/cartList.css" rel="stylesheet" type="text/css" />
+    <link href="{G_TEMPLATES_CSS}/mobile/activity.css" rel="stylesheet" type="text/css" />
+</head>  
+<body style="height:100%;background-color: #f6f6f6;overflow: hidden;" >
+<div class="h5-1yyg-v1">
+    <!-- <input name="hidShopMoney" type="hidden" id="hidShopMoney" value="{wc:$MoneyCount}" /> -->
+     <input name="hidShopMoney" type="hidden" id="hidShopMoney" value="{wc:$activity['act_charge']}" />
+
+    <input name="hidBalance" type="hidden" id="hidBalance" value="{wc:$member['money']}" />
+    <!-- <input name="hidBalance" type="hidden" id="hidBalance" value="{wc:$Money}" /> -->
+
+    <!--<input name="hidUserPoints" type="hidden" id="hidUserPoints" value="{wc:$user_discount}" />
+    <input name="hidMaxPoints" type="hidden" id="hidMaxPoints" value="{wc:$limit_discount}" />-->
+
+     <input name="hidPoints" type="hidden" id="hidPoints" value="{wc:$discount}" />
+    <section class="act-infos clearfix">
+        <div class="activity-payment-content clearfix">
+            <div class="content-left"><img src="{G_UPLOAD_PATH}/{wc:$activity['act_poster']}"></div>
+            <div class="content-right">
+                <ul>
+                    <li class="content-items content-items-t">{wc:$activity['act_title']}</li>
+                    <li class="content-items">{wc:fun:date('y-m-d H:i',$activity['act_start_time'])}至{wc:fun:date('y-m-d H:i',$activity['act_end_time'])}</li>
+                    <li class="content-items">{wc:$activity['act_address']}</li>
+                    <li class="content-items">活动费用：{wc:if $activity['act_charge']=='0.00'}免费{wc:else}<span class="act-cost">{wc:$activity['act_charge']}</span>元{wc:if:end}</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+    <section class="act-pay-type">
+        <ul class="act-pay-type-item">
+            <li id="balance" class="">
+                <span class="type-text">我的余额</span>
+                <span class="money-symbol">￥</span>
+                <span class="type-value">{wc:$member['money']}</span>
+                <span class="type-select "></span>
+            </li>
+            {wc:if $integral['value'] != 0}
+            <li id="integral">
+                <span class="type-text">积分抵扣</span>
+                <span class="money-symbol">￥</span>
+                <span class="type-value">{wc:$discount}</span>
+                <span class="type-select"></span>
+            </li>
+            {wc:if:end}
+        </ul>
+
+    </section>
+
+	<div class="empty-space"></div>
+    <section class="payBar">
+    <span>合计：<em>￥<i id="total-price">{wc:$activity['act_charge']}</i></em></span>
+      <a id="btnPay" href="javascript:;" class="straight_btn">确认付款</a>
+        <input type="hidden" class="act_id" name="act_id" value="{wc:$activity['act_id']}">
+    </section>
+
+    <script src="{G_TEMPLATES_JS}/mobile/jquery190.js" language="javascript" type="text/javascript"></script>
+    <script src="{G_TEMPLATES_JS}/mobile/actpayFun.js" language="javascript" type="text/javascript"></script>
+
+    <script language="javascript" type="text/javascript">
+      var Path = new Object();
+      Path.Skin="{G_TEMPLATES_STYLE}";
+      Path.Webpath = "{WEB_PATH}";
+      Path.submitcode = '{wc:$submitcode}';   
+    var Base={head:document.getElementsByTagName("head")[0]||document.documentElement,Myload:function(B,A){this.done=false;B.onload=B.onreadystatechange=function(){if(!this.done&&(!this.readyState||this.readyState==="loaded"||this.readyState==="complete")){this.done=true;A();B.onload=B.onreadystatechange=null;if(this.head&&B.parentNode){this.head.removeChild(B)}}}},getScript:function(A,C){var B=function(){};if(C!=undefined){B=C}var D=document.createElement("script");D.setAttribute("language","javascript");D.setAttribute("type","text/javascript");D.setAttribute("src",A);this.head.appendChild(D);this.Myload(D,B)},getStyle:function(A,B){var B=function(){};if(callBack!=undefined){B=callBack}var C=document.createElement("link");C.setAttribute("type","text/css");C.setAttribute("rel","stylesheet");C.setAttribute("href",A);this.head.appendChild(C);this.Myload(C,B)}}
+    function GetVerNum(){var D=new Date();return D.getFullYear().toString().substring(2,4)+'.'+(D.getMonth()+1)+'.'+D.getDate()+'.'+D.getHours()+'.'+(D.getMinutes()<10?'0':D.getMinutes().toString().substring(0,1))}
+    Base.getScript('{G_TEMPLATES_JS}/mobile/Bottom.js?v='+GetVerNum());
+        $(function(){
+            var wx=false;
+            var ua = navigator.userAgent.toLowerCase();
+            if(ua.match(/MicroMessenger/i)=="micromessenger"){
+                wx = true;
+            }
+            if(!wx){
+                $(".gray9:contains('微信支付')").remove();
+            }else{
+                $(".gray9:contains('支付宝')").remove();
+            }
+        });
+    </script>
+</body>
+</html>

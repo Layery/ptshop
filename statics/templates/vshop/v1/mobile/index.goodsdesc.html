@@ -1,0 +1,230 @@
+
+<!DOCTYPE html>
+<html>
+<head><meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+<title>商品详情</title>
+
+
+<meta content="app-id=518966501" name="apple-itunes-app" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, user-scalable=no, maximum-scale=1.0" />
+<meta content="yes" name="apple-mobile-web-app-capable" />
+<meta content="black" name="apple-mobile-web-app-status-bar-style" />
+<meta content="telephone=no" name="format-detection" />
+<link rel="stylesheet" media="screen,projection,tv" href="{G_TEMPLATES_CSS}/mobile/header_footer.css">
+<link rel="stylesheet" media="screen,projection,tv" href="{G_TEMPLATES_CSS}/mobile/main.css">
+<link href="{G_TEMPLATES_CSS}/mobile/comm.css" rel="stylesheet" type="text/css" />
+
+
+<style type="text/css">
+#divRecordList img,#divRecordList embed{
+width:100% !important;
+height:auto !important;
+}
+#divRecordList{
+margin-top: 5px !important;
+margin-left: 5px !important;
+margin-right: 5px !important;
+border-left: none !important;
+}
+</style>
+
+
+
+
+<link href="{G_TEMPLATES_CSS}/mobile/comm.css" rel="stylesheet" type="text/css" />
+<link href="{G_TEMPLATES_CSS}/mobile/goods.css" rel="stylesheet" type="text/css" />
+<script src="{G_TEMPLATES_JS}/mobile/jquery190.js" language="javascript" type="text/javascript"></script>
+<!-- <script id="pageJS" data="{G_TEMPLATES_JS}/mobile/BuyRecord.js" language="javascript" type="text/javascript"></script> -->
+</head>
+<body>
+<div class="h5-1yyg-v1" id="loadingPicBlock">
+    
+<!-- 栏目页面顶部 -->
+
+
+<!-- 内页顶部 -->
+
+
+    <input name="hidCodeID" type="hidden" id="hidCodeID" value="{wc:$itemid}" />
+    <input name="hidIsEnd" type="hidden" id="hidIsEnd" value="1" />
+
+    <!-- 云购记录 -->
+    <section id="buyRecordPage" class="goodsCon">
+        <div id="divRecordList" class="recordCon z-minheight" style="display:block;">
+            {wc:$desc['content']}
+        </div>
+        
+    </section>
+    <div class="empty-space"></div>
+
+    
+   <!--S 底部导航 -->
+    <ul id="c_main_menu">
+      <li id="nav_index" class="">
+        <a href="{WEB_PATH}/mobile/mobile">
+          <span class="c_index"></span>
+          <b>首页</b>
+        </a>
+      </li>
+      
+      <li id="nav_goods">
+        <a href="{WEB_PATH}/mobile/home/userbuylist">
+          <span class="c_all_good"></span>
+          <b>订单</b>
+        </a>
+      </li>
+      <li id="nav_goods">
+        <a class="add" codeid="{wc:$itemid}" href="javascript:;">
+          <span class="c_parchase"></span>
+          <b>去拼团</b>
+        </a>
+      </li>
+      <!--<li id="nav_addCart">
+           <span class="c_add"></span>
+          <b>加入购物车</b> 
+      </li>-->
+      <!--<li id="nav_buy">
+           <span class="c_parchase"></span>
+          <b>立即购买</b> 
+      </li>-->
+    </ul> 
+    <!--E 底部导航 -->
+    <!--固定购物车 
+       <div class="shopcartFix">
+        <a href="{WEB_PATH}/mobile/cart/cartlist">
+          <span class="c_cart_bag"></span>
+          <em class="z-shop" id="btnCart">0</em>
+        </a>
+      </div>-->
+
+</div>
+<style>
+#pageDialogBG{-webkit-border-radius:5px; width:200px;height:45px;color:#fff;font-size:16px;text-align:center;line-height:45px;}
+</style>
+<div id="pageDialogBG" class="pageDialogBG">
+<div class="Prompt"></div>
+</div>
+<script language="javascript" type="text/javascript">
+
+$(function(){
+    $('#nav_addCart').click(function(){
+        var codeid=$("#hidCodeID").val();
+    $.getJSON('{WEB_PATH}/mobile/ajax/goodsSelect/'+codeid+'/'+2,function(data){
+      $("body").append(data);
+    $('.selectBar-wrap').slideDown();
+
+    })
+    });
+    $('#nav_buy').click(function(){
+        var codeid=$("#hidCodeID").val();
+    $.getJSON('{WEB_PATH}/mobile/ajax/goodsSelect/'+codeid+'/'+3,function(data){
+      $("body").append(data);
+    $('.selectBar-wrap').slideDown();
+
+    })
+    });
+    $(document).on("click",'.add',function(){
+        var codeid=$(this).attr('codeid');
+        $.getJSON('{WEB_PATH}/mobile/ajax/goodsSelect/'+codeid+'/'+1,function(data){
+            $("body").append(data);
+        $('.selectBar-wrap').slideDown();
+        });
+    });
+
+
+});
+</script>
+<script>	
+//下面这个函数用来转换数组到json格式
+function arrayToJson(o) { 
+	var r = []; 
+	if (typeof o == "string") return "\"" + o.replace(/([\'\"\\])/g, "\\$1").replace(/(\n)/g, "\\n").replace(/(\r)/g, "\\r").replace(/(\t)/g, "\\t") + "\""; 
+	if (typeof o == "object") { 
+	if (!o.sort) { 
+	for (var i in o) 
+	r.push(i + ":" + arrayToJson(o[i])); 
+	if (!!document.all && !/^\n?function\s*toString\(\)\s*\{\n?\s*\[native code\]\n?\s*\}\n?\s*$/.test(o.toString)) { 
+	r.push("toString:" + o.toString.toString()); 
+	} 
+	r = "{" + r.join() + "}"; 
+	} else { 
+	for (var i = 0; i < o.length; i++) { 
+	r.push(arrayToJson(o[i])); 
+	} 
+	r = "[" + r.join() + "]"; 
+	} 
+	return r; 
+	} 
+	return o.toString(); 
+}
+//这个是调用微信图片浏览器的函数 
+    function addLoadEvent(func){ 
+        //将函数作为参数，此函数就是 onload 触发时需要执行的某个函数
+            var oldonload=window.onload; 
+            //将原来的 onload 的值赋给临时变量 oldonload。
+            if(typeof window.onload!="function"){
+            //判断 onload 的类型是否是 function。如果已经执行window.onload=function(){...} 赋值，那么此时 onload 的类型就是 function
+            //否，则说明 onload 还没有被赋值，当前任务 func 为第一个加入的任务
+                window.onload=func(); 
+                
+                //作为第一个任务，给 onload 赋值
+            }else{ 
+            //是，则说明 onload 已被赋值，onload 中先前已有任务加入
+                window.onload=function(){
+                    oldonload();
+                    func(); 
+                    //作为后续任务，追加到先前的任务后面
+                }
+            }
+      }
+      var imgs=new Array();
+      var nowImgurl="";
+      function getPicInfo()
+      {
+        var imgObj=document.getElementsByTagName('img');  //获取图文中所有的img标签对象
+        
+        for(var i=0; i<imgObj.length; i++)
+        {
+          imgs.push(imgObj[i].src); 
+          nowImgurl = this.src;    //获取当前点击图片url
+          //下面调用微信内置图片浏览组建
+          imgObj[i].onclick=function(){
+            WeixinJSBridge.invoke("imagePreview",{
+              "urls":imgs,
+              "current":nowImgurl
+              })
+          }
+        }
+      }
+      
+      addLoadEvent(getPicInfo);    //监听事件
+      
+</script>
+<script language="javascript" type="text/javascript">
+  var Path = new Object();
+  Path.Skin="{G_TEMPLATES_STYLE}";
+  Path.Webpath = "{WEB_PATH}";
+  Path.submitcode = '{wc:$submitcode}';
+  Path.Uploadpath = "{G_UPLOAD_PATH}";
+
+
+  
+  
+var Base={head:document.getElementsByTagName("head")[0]||document.documentElement,Myload:function(B,A){this.done=false;B.onload=B.onreadystatechange=function(){if(!this.done&&(!this.readyState||this.readyState==="loaded"||this.readyState==="complete")){this.done=true;A();B.onload=B.onreadystatechange=null;if(this.head&&B.parentNode){this.head.removeChild(B)}}}},getScript:function(A,C){var B=function(){};if(C!=undefined){B=C}var D=document.createElement("script");D.setAttribute("language","javascript");D.setAttribute("type","text/javascript");D.setAttribute("src",A);this.head.appendChild(D);this.Myload(D,B)},getStyle:function(A,B){var B=function(){};if(callBack!=undefined){B=callBack}var C=document.createElement("link");C.setAttribute("type","text/css");C.setAttribute("rel","stylesheet");C.setAttribute("href",A);this.head.appendChild(C);this.Myload(C,B)}}
+function GetVerNum(){var D=new Date();return D.getFullYear().toString().substring(2,4)+'.'+(D.getMonth()+1)+'.'+D.getDate()+'.'+D.getHours()+'.'+(D.getMinutes()<10?'0':D.getMinutes().toString().substring(0,1))}
+Base.getScript('{G_TEMPLATES_JS}/mobile/Bottom.js?v='+GetVerNum());
+  // $(function(){
+  //    var wx=false;
+  //  var ua = navigator.userAgent.toLowerCase();  
+  //  if(ua.match(/MicroMessenger/i)=="micromessenger") { 
+  //  wx = true;
+  //  }
+  //  if(!wx){
+  //    $(".gray9:contains('微信支付')").remove();
+    
+  //  }
+  // });
+</script>
+</body>
+</html>
+<script src="{G_TEMPLATES_JS}/mobile/groupPurchase.js"></script><!-- 载入拼团倒计时 -->

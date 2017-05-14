@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>退款详情</title>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="format-detection" content="telephone=no">
+<meta name="keywords" content="{wc:if isset($keywords)}{wc:$keywords}{wc:else}{wc:fun:_cfg("web_key")}{wc:if:end}" />
+<meta name="description" content="{wc:if isset($description)}{wc:$description}{wc:else}{wc:fun:_cfg("web_des")}{wc:if:end}" />
+<link rel="stylesheet" media="screen,projection,tv" href="{G_TEMPLATES_CSS}/mobile/main.css">
+<link rel="stylesheet" type="text/css" href="{G_TEMPLATES_CSS}/mobile/activity.css">
+</head>
+<body ontouchstart="" onmouseover="" style="background-color: #f6f6f6; height: auto;">
+	<section class="refund-infos-bar">
+		<p class="refund-money"><b>退款金额</b> <span class="money-symbol">￥</span><span>{wc:$orderInfo['o_refund']}</span></p>
+		<p class="refund-count"><b>数量</b><span>1</span></p>
+		<p class="refund-account"><b>退款账户</b><span>微信支付</span></p>
+	</section>
+	<section class="refund-detail-bar">
+		<h3 class="refund-deail-title">退款详情</h3>
+		<div class="refund-detail-wrap">
+			<ul class="refund-detail-list">
+				<li>
+					<h4>申请已提交</h4>
+					<p>您的退款申请已成功提交</p>
+					<span class="refund-detail-order">1</span>
+				</li>
+				<li>
+					<h4>申请审核中</h4>
+					<p>您的退款申请正在审核中，如有疑问可直接联系{wc:$sys_mobile['value']}</p>
+					<span class="refund-detail-order">2</span>
+				</li>
+				<li>
+					<h4>微信支付处理中</h4>
+					<p>您的退款申请已审核通过，微信支付会在1-3个工作日内完
+成处理。</p>
+					<span class="refund-detail-order">3</span>
+				</li>
+				<li>
+					<h4>退款成功</h4>
+					<p>微信支付处理完成后，退款将会在3-5个工作日内退至您的
+微信支付账户。</p>
+					<span class="refund-detail-order">4</span>
+				</li>
+			</ul>
+		</div>
+	</section>
+	<a class="refund-cancel-btn" id="refund-cancel" href="javascript:;">撤销退款</a>
+	<div style="height:10px;"></div>
+
+
+
+
+
+	<script src="{G_TEMPLATES_JS}/mobile/jquery190.js" language="javascript" type="text/javascript"></script>
+	<script src="{G_TEMPLATES_JS}/mobile/activity.js" type="text/javascript"></script>
+	<script>
+		$(function () {
+			var order_id = {wc:$order_id};
+			if(order_id == 0){
+				showtips('参数错误，请重新请求')
+			}
+			var step = {wc:$orderInfo['o_refund_status']};
+			$('ul li').each(function (index) {
+				//判断退款进行到哪一步了
+				if(index == step && step != 0){
+				    $(this).find('h4').addClass('refund-step-h4');
+				    $(this).find('p').addClass('refund-step-p');
+				}
+				if(step == 2 || step == 3){
+                    $('#refund-cancel').addClass('refund-cancel-disabled')
+					$('#refund-cancel').unbind('click');
+				}
+            })
+			if(!$('#refund-cancel').hasClass('refund-cancel-disabled')){
+                $('#refund-cancel').click(function () {
+                    var refund = $(this);
+                    //撤销退款
+					$.ajax({
+					    type:'GET',
+						url:'{WEB_PATH}/mobile/activity/ajaxCancelRefund',
+						data:{order_id:order_id},
+						dataType:'json',
+						success:function (data) {
+							if(data.state==0){
+							    showtips(data.msg);
+							    refund.text('已撤销');
+                                refund.addClass('refund-cancel-disabled')
+                                refund.unbind('click');
+							}else{
+							    showtips(data.msg)
+							}
+                        }
+					});
+                });
+			}
+		})
+	</script>
+
+</body>
+</html>

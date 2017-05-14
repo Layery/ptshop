@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<title>摇一摇抽奖</title>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+	<meta name="format-detection" content="telephone=no">
+	<meta name="keywords" content="{wc:if isset($keywords)}{wc:$keywords}{wc:else}{wc:fun:_cfg("web_key")}{wc:if:end}" />
+	<meta name="description" content="{wc:if isset($description)}{wc:$description}{wc:else}{wc:fun:_cfg("web_des")}{wc:if:end}" />
+	<link rel="stylesheet" type="text/css" href="{G_TEMPLATES_CSS}/mobile/shake.css">
+</head>
+<body ontouchstart="" onmouseover="">
+<div class="logo-bar"></div>
+<header class="shake-title">
+		<h2 class="shake-h">北京<i>宁夏人</i>迎新春联谊会</h2>
+		<h2 class="right">现场抽奖</h2>
+</header>
+<section class="shake-main">
+	<div class="shake-wrap">
+
+		<div class="shake-inner"></div>
+	</div>
+	<div class="shake-item "></div>
+	<div class="shake-wrap-bg"></div>
+
+</section>
+<footer class="shake-footer">
+	<h4>动手摇一摇，奖品带回家！</h4>
+	<!-- <a class="shake-rule" href="">活动规则</a> -->
+</footer>
+
+<!-- 恭喜弹出框 start-->
+<div class="congratulation-wrap">
+	<div class="congratulation-bar">
+		<div class="congra-title">
+			<h3>恭喜您</h3>
+		</div>
+		<div class="congra-content">
+			<p>已经进入奖池</p>
+			<p>请等待开奖</p>
+		</div>
+		<a class="got" onclick="hidethis(this)" >我知道了</a>
+	</div>
+</div>
+<!-- 恭喜弹出框 end-->
+
+<!-- 通道状态弹出框 start-->
+<div class="gatewayState-wrap" style="display: none;">
+<div class="gatewayState-bar">
+	<div class="congra-content">
+		<p>很遗憾</p>
+		<p>通道已关闭</p>
+	</div>
+	<a class="got" onclick="hidethis(this)" >我知道了</a>
+</div>
+</div>
+
+<!-- 通道状态弹出框 end-->
+
+
+<audio id='shake-audio' src="{G_TEMPLATES_IMAGE}/shakepic/shake.mp3" preload></audio>
+
+
+<script src="{G_TEMPLATES_JS}/mobile/jquery190.js" language="javascript" type="text/javascript"></script>
+<script type="text/javascript">
+	//点击事件
+
+	var timer = null;
+	var myaudio = document.getElementById('shake-audio');
+
+document.addEventListener("WeixinJSBridgeReady", function () {//微信
+	       myaudio.play();
+	       myaudio.pause();
+	    }, false);
+		
+	var item;
+
+	//ajax查询开启的是那个通道
+	setInterval(function () {
+		$.ajax({
+			type:'POST',
+			url:'{G_WEB_PATH}/mobile/mobile/ajaxSearchBtn',
+			dataType:'json',
+			success:function (msg) {
+				item = msg.item;
+			}
+		});
+	}, 5000);
+	console.log(item);
+
+	 $('.shake-main').click(function(){
+	 	// $('.shake-item').stop();
+	 	$('.shake-item').addClass('shake');
+	 	myaudio.play();
+
+	 	ajaxSign(item)
+
+	 });
+
+	//摇动事件：
+	if (window.DeviceMotionEvent) {
+		window.addEventListener('devicemotion',deviceMotionHandler,false);
+	}
+
+	//获取加速度信息
+	//通过监听上一步获取到的x, y, z 值在一定时间范围内的变化率，进行设备是否有进行晃动的判断。
+	//而为了防止正常移动的误判，需要给该变化率设置一个合适的临界值。
+	var SHAKE_THRESHOLD = 2300;
+	var last_update = 0;
+	var x, y, z, last_x = 0, last_y = 0, last_z = 0;
+	function deviceMotionHandler(eventData) {
+		var acceleration =eventData.accelerationIncludingGravity;
+		var curTime = new Date().getTime();
+		if ((curTime-last_update)> 100) {
+
+			var diffTime = curTime -last_update;
+			last_update = curTime;
+			x = acceleration.x;
+			y = acceleration.y;
+			z = acceleration.z;
+			var speed = Math.abs(x +y + z - last_x - last_y - last_z) / diffTime * 10000;
+			if (speed > SHAKE_THRESHOLD) {
+
+				//摇动 do something
+
+				myaudio.play();
+				$('.shake-item').addClass('shake');
+				setTimeout(function(){
+					$('.shake-item').removeClass('shake');
+								
+				},1000);
+				ajaxSign(item) //摇一摇进入奖池
+
+
+			}
+
+			last_x = x;
+			last_y = y;
+			last_z = z;
+		}
+	}
+
+	function ajaxSign(item) {
+		var wsUri = "ws://mall.jingninghui.com:9000/server.php";
+		websocket = new WebSocket(wsUri);
+		websocket.onopen = function(ev) { // connection is open
+			console.log('connection is open');
+		}
+		console.log(item);
+		console.log('love');
+		var uid = {wc:$member['uid']};
+		$.ajax({
+			type:'POST',
+			url:'{G_WEB_PATH}/mobile/mobile/ajaxShakeReward',
+			data:{uid:uid,item:item},
+			dataType:'json',
+			success:function (msg) {
+				if(msg.state == 0){
+					console.log(msg);
+					setTimeout(function(){
+						$('.shake-item').removeClass('shake');
+						$('.congratulation-wrap').show();
+					},1000);
+					var web_name = 'shake'; //通道页面
+					var msg = {
+						img:msg.img,
+						item:item,
+						web_name:web_name,
+					};
+					console.log(msg)
+					websocket.send(JSON.stringify(msg));
+				}else{
+					setTimeout(function(){
+						$('.shake-item').removeClass('shake');
+						openbar(msg.msg_p1,msg.msg_p2);
+					},1000);
+				}
+			}
+		});
+		websocket.onerror = function(ev){console.log('Error Occurred -'+ev.data);};
+		websocket.onclose = function(ev){console.log('Client notified socket has closed',ev);};
+	}
+
+	// 关闭弹窗
+
+	function hidethis(obj){
+		$(obj).parent().parent().hide();
+	}
+	//打开通道未开启框
+	function openbar(msg1,msg2){
+		var bar = $('.gatewayState-wrap');
+			bar.find('p').first().text(msg1);
+			bar.find('p').last().text(msg2);
+			bar.show();
+	}
+</script>
+</body>
+</html>

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>嘉宾抽奖</title>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="format-detection" content="telephone=no">
+<meta name="keywords" content="{wc:if isset($keywords)}{wc:$keywords}{wc:else}{wc:fun:_cfg("web_key")}{wc:if:end}" />
+<meta name="description" content="{wc:if isset($description)}{wc:$description}{wc:else}{wc:fun:_cfg("web_des")}{wc:if:end}" />
+<link rel="stylesheet" type="text/css" href="{G_TEMPLATES_CSS}/mobile/shake.css">
+	<script src="{G_TEMPLATES_JS}/mobile/jquery190.js" language="javascript" type="text/javascript"></script>
+</head>
+<style type="text/css">
+	body{
+		  background-image: -moz-radial-gradient( 50% 50%, circle closest-side, rgb(253,182,39) 0%, rgb(255,123,0) 100%);
+		  background-image: -webkit-radial-gradient( 50% 50%, circle closest-side, rgb(253,182,39) 0%, rgb(255,123,0) 100%);
+		  background-image: -ms-radial-gradient( 50% 50%, circle closest-side, rgb(253,182,39) 0%, rgb(255,123,0) 100%);
+
+		}
+
+	}
+</style>
+<body ontouchstart="" onmouseover="">
+<input type="text" name="lottery" class="lottery">
+<input type="button" value="开始">
+</body>
+<script type="text/javascript">
+	$(function(){
+		var wsUri = "ws://127.0.0.1:9000/server.php";
+		websocket = new WebSocket(wsUri);
+		websocket.onopen = function(ev) { // connection is open
+			console.log('connection is open');
+		}
+		//#### Message received from server?
+		websocket.onmessage = function(ev) {
+			var msg = JSON.parse(ev.data); //PHP sends Json data
+			var type = msg.type; //message type
+			var umsg = msg.message; //message text
+			var item = msg.item;  //奖项id
+			var web_name = msg.web_name; //用来识别是那个页面的状态
+			console.log(msg);
+			if(type == 'system')
+			{
+				console.log('System status -'+umsg);
+			}
+			if(web_name = 'lottery'){
+				$.ajax({
+					type:'POST',
+					url:'{G_WEB_PATH}/mobile/mobile/ajaxLottery',
+					data:{item:item},
+					dataType:'json',
+					success:function (msg) {
+
+					}
+				});
+			}
+		};
+		websocket.onerror = function(ev){
+			console.log('Error Occurred -'+ev.data);
+		};
+		websocket.onclose = function(ev){
+			console.log('Client notified socket has closed',ev);
+		};
+	})
+</script>
+</html>

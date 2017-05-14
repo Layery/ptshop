@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>活动详情</title>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="format-detection" content="telephone=no">
+<meta name="keywords" content="{wc:if isset($keywords)}{wc:$keywords}{wc:else}{wc:fun:_cfg("web_key")}{wc:if:end}" />
+<meta name="description" content="{wc:if isset($description)}{wc:$description}{wc:else}{wc:fun:_cfg("web_des")}{wc:if:end}" />
+<link rel="stylesheet" media="screen,projection,tv" href="{G_TEMPLATES_CSS}/mobile/main.css">
+<!-- <link rel="stylesheet" type="text/css" href="{G_TEMPLATES_CSS}/mobile/activity.css"> -->
+<link rel="stylesheet" type="text/css" href="{G_TEMPLATES_CSS}/mobile/activity.css">
+<link rel="stylesheet" media="screen,projection,tv" href="{G_TEMPLATES_CSS}/mobile/swiper.min.css">
+
+
+</head>
+<body ontouchstart="" onmouseover="">
+	<header class="activity-bg">
+		<img src="{G_UPLOAD_PATH}/{wc:$activity['act_poster']}">
+	</header>
+	<section class="activity-infos">
+		<ul>
+			<li class="activity-info-items">
+				<i class="theme-icon"></i>
+				<h3 >主题</h3>
+				<p class='activity-info-theme'>{wc:$activity['act_title']}</p>
+			</li>
+			<li class="activity-info-items ">
+				<i class="time-icon"></i>
+				<h3 >时间</h3>
+				<p class='activity-info-time'>{wc:fun:date('m-d H:i',$activity['act_start_time'])}至{wc:fun:date('m-d H:i',$activity['act_end_time'])}</p>
+			</li>
+			<li class="activity-info-items right-arrow activity-info-items-a">
+				<a href="http://apis.map.qq.com/tools/poimarker?type=0&marker=coord:{wc:$activity['act_latlng']};title:{wc:$activity['act_address']};addr:{wc:$activity['act_address']}&key={wc:$appInfo['key']}&referer={wc:$appInfo['app_name']}">
+				<i class="location-icon"></i>
+				<h3 >地点</h3>
+				<p class='activity-info-location'>{wc:$activity['act_address']}</p>
+				</a>
+			</li>
+
+			<li class="activity-info-items  activity-info-items-counts ">
+				<i class="peoplecount-icon"></i>
+				<h3 >报名人数 <span class="already-num">{wc:$activity['act_num_signed']}</span >/<span class='last-num'>{wc:if empty($activity['act_num_limit'])}不限制名额{wc:else}{wc:$activity['act_num_limit']}{wc:if:end}</span></h3>
+				<div class='activity-info-peoplecount'>
+				<div class="item-groups">
+					{wc:if empty($signNum)}
+					暂无
+					{wc:else}
+					{wc:loop $signNum $item}
+					<img src="{wc:$item['o_photo']}">
+					{wc:loop:end}
+					{wc:if:end}
+				</div>
+				</div>
+			</li>
+			<li class="activity-info-items ">
+				<i class="cost-icon"></i>
+				<h3 >费用</h3>
+				<p class='activity-info-cost'>{wc:if $activity['act_charge']=='0.00'}免费{wc:else}<span class="money-symbol">￥</span><span>{wc:$activity['act_charge']}元</span>{wc:if:end}</p>
+			</li>
+		</ul>
+	</section>
+	<section class="activity-detail">
+		<h3 class='detail-header'><i></i>详情</h3>
+		{wc:$content}
+		
+
+<!-- 展开详情 start -->
+
+		
+		<div class="detail-cover">
+			<i></i>
+			<i></i>
+			<span>展开详情</span>
+		</div>
+		
+<!-- 展开详情 end -->
+
+	</section>
+	<section class="activity-rules">
+		<h3>活动须知</h3>
+		{wc:loop $notice $key $item}
+        <p>{wc:$key+1}.{wc:$item['n_notice']}</p>
+		{wc:loop:end}
+
+	</section>
+
+	
+	<div class="btn-group clearfix">
+		<a class="phone" href="tel:{wc:$activity['act_consult']}">电话</a>
+
+		<a class="chatBtn" href="javascript:;"  onclick="_MEIQIA('showPanel')">聊天</a>
+		<button class="apply-btn">立即报名</button>
+	</div>
+
+
+	<!-- 报名弹出层 start-->
+	<div class="apply-bar">
+		<div class="apply-form">
+		<a class="activity-close apply-bar-close" href="javascript:;"></a>
+			<h3>填写报名信息</h3>
+			<form id='applyInfo' >
+				<ul>
+					<li class="apply-form-items"><span>姓名:</span><input id="userName" type="text" name="userName" value="{wc:$signInfo['userName']}" maxlength="20"></li>
+					<li class="apply-form-items"><span>手机号:</span><input id="userTel" type="tel" name="userTel" value="{wc:$signInfo['userTel']}" maxlength="11"></li>
+					<li class="apply-form-items"><span>身份证号:</span><input id="idCard" type="text" name="userId" value="{wc:$signInfo['userId']}" maxlength="18"></li>
+					<li class="apply-form-items lastli"><i></i>我同意<a href="javascript:void(0);" onclick="showDeals('duty')">&lt;&lt;免责协议&gt;&gt;</a></li>
+				</ul>
+				<input type="hidden" name="actId" value="{wc:$activity['act_id']}">
+				<input type="hidden" name="shareUid" value="{wc:$shareUid}">
+				<!--<input type="hidden" name="cId" value="$charge['c_id']}">-->
+				<input type="button" value="提交报名" class="apply-submit" onclick="applySubmit()">
+
+			</form>
+		</div>
+	</div>
+	<!-- 报名弹出层 end-->
+
+	<!-- 免责协议弹出层 start-->
+	<div class="activity-deal-wrap">
+	<div class="activity-deal-bar">
+		<h3>免责协议</h3>
+		<div class="deal-content">
+			<p>1.活动有风险，请谨慎报名，可以自行购买保险。</p><p>2.参与者须对自己的行为及后果负责，不建议患有高血压、心脏病及其他不适宜参与剧烈运动的疾病的患者参加高强度高风险的户外活动。</p><p>3.代他人报名者，代报名者有义务把活动情况详细告知被代报名者，被代报名者由代报名者承担责任。</p><p>4.凡参与者均视为具有完全民事行为能力人。如在活动中发生非人为主观故意造成的人身损害后果，领队及活动召集者会全力组织救助，但不承担赔偿及相关的责任。</p><p>【特别提示】当您按照报名页面提示填写信息、阅读并同意协议且完成全部报名内容后，即表示您已充分阅读、理解并接受协议的全部内容。</p>
+
+		</div>
+		<div class="deal-conform"><a class="agreed" href="javascript:void(0);" onclick="hideDeals('duty')">同意</a></div>
+		<div class="white-cover"></div>
+	</div>
+	</div>
+
+
+
+	<!-- 免责协议弹出层 end-->
+	
+
+
+	<!-- 支付弹出层 start-->
+
+	<div class="activity-payment-bar">
+		<div class="activity-payment-wrap">
+			<a class="activity-close payment-bar-close" href="javascript:;"></a>
+			<h3>支付活动费用</h3>
+			<div class="activity-payment-content">
+				<div class="content-left"><img src="{G_UPLOAD_PATH}/{wc:$activity['act_poster']}"></div>
+				<div class="content-right">
+					<ul>
+						<li class="content-items content-items-t">{wc:$activity['act_title']}</li>
+						<li class="content-items">{wc:fun:date('m-d H:i',$activity['act_start_time'])}至{wc:fun:date('m-d H:i',$activity['act_end_time'])}</li>
+						<li class="content-items">{wc:$activity['act_address']}</li>
+						<li class="content-items">人均 {wc:$activity['act_charge']}元</li>
+					</ul>
+				</div>
+			</div>
+			{wc:if $activity['act_is_group'] == 1}
+			<div class="activity-progress-bar">
+				<div class="activity-progress">
+					<div class="runner">
+						<div class="tips-num"><span class="signed-num">{wc:$activity['act_num_signed']}人</span></div>
+					</div>
+					<div class="point-group">
+						{wc:loop $price_step $k $item}
+						<div class="point-item">
+							{wc:if $k == 0}
+							<span class="point arrive">{wc:$item['money']}元</span>
+							<span class="point-desc"><i hidden>0</i>开团</span>
+							{wc:else}
+							<span class="point">{wc:$item['money']}元</span>
+							<span class="point-desc"><i>{wc:$item['num']}</i>人团</span>
+							{wc:if:end}
+						</div>
+						{wc:loop:end}
+						<!--<div class="point-item">
+							<span class="point">10元</span>
+							<span class="point-desc"><i>30</i>人团</span>	
+						</div>
+						<div class="point-item">
+							<span class="point">8元</span>
+							<span class="point-desc"><i>50</i>人团</span>	
+						</div>
+						<div class="point-item">
+							<span class="point ">6元</span>
+							<span class="point-desc"><i>100</i>人团</span>	
+						</div>-->
+					</div>
+				</div>
+<!-- 				<div class="activity-progress-desc">
+					<span><i>30</i>人团</span>
+					<span><i>50</i>人团</span>
+					<span><i>100</i>人团</span>
+				</div> -->
+			</div>
+			{wc:if:end}
+			<div class="group-deal"><i></i>我同意{wc:if $activity['act_is_group'] == 1}<a href="javascript:void(0);" onclick="showDeals('group')">&lt;&lt;拼团说明&gt;&gt;</a>{wc:else}<a href="javascript:void(0);" onclick="showDeals('duty')">&lt;&lt;免责说明&gt;&gt;</a>{wc:if:end}</div>
+			<div class="pay-bottom clearfix">
+				<div class="payment-count">总计：<span class="money-symbol">￥</span><span class="total-cost">{wc:$activity['act_charge']}元</span> </div>
+				<button class="activity-pay">支付</button>
+			</div>
+		</div>
+		
+	</div>
+
+	<!-- 支付弹出层 end-->
+
+	<!-- 支付失败 start-->
+	<div class="pay-result-wrap pay-failed" >
+		<div class="pay-result-bar">
+			<h3>支付失败</h3>
+			<p>支付遇到问题，请尝试重新支付</p>
+			<div class='pay-result-btns'>
+				<a href="javascript:;" id="pay-cancel">取消</a>
+				<a href="javascript:;" id="pay-refresh">重新支付</a>
+			</div>
+		</div>
+	</div>
+
+	<!-- 支付失败 end-->
+
+	<!-- 支付成功 start-->
+	<div class="pay-result-wrap pay-successed">
+		<div class="pay-result-bar">
+			<h3>支付成功</h3>
+			<p>恭喜您报名成功，记得准时参加活动哦！</p>
+			<div class='pay-result-btns'>
+				<a href="javascript:;" id="pay-sure">确定</a>
+				<a href="{WEB_PATH}/mobile/activity/activitylists">继续看看</a>
+			</div>
+		</div>
+	</div>
+
+	<!-- 支付成功 end-->
+	
+
+	
+
+
+
+	<div class="empty-space"></div>
+
+	<script src="{G_TEMPLATES_JS}/mobile/jquery190.js" language="javascript" type="text/javascript"></script>
+	<script src="{G_TEMPLATES_JS}/mobile/activity.js" type="text/javascript"></script>
+	<script src="{G_TEMPLATES_JS}/mobile/swiper.min.js"></script>
+	<script>
+		$(function () {
+			var act_flag = "{wc:$actInfo['flag']}";
+			if(act_flag == 'ok'){
+				$('.pay-successed').show();
+			}else if(act_flag == 'failed'){
+				$('.pay-failed').show();
+			}else{
+
+			}
+			$('#pay-cancel').click(function () {
+				$(this).parent().parent().parent().hide();
+			});
+			$('#pay-refresh').click(function () {
+				$('.apply-btn').trigger('click');
+			});
+			$('#pay-sure').click(function () {
+				$('.pay-successed').hide();
+			});
+			//已报名处理
+			var flag = {wc:$flag};
+			//var invalid = {wc:$activity['act_sign_flag']};
+			var act_start_time = {wc:$activity['act_start_time']};
+			var act_end_time = {wc:$activity['act_end_time']};
+			var time = {wc:$time};
+			if(flag == 1){
+				$('.apply-btn').text('已报名').attr('disabled','disabled').addClass('btn-disabled');
+			}else if(flag == 2) {
+				$('.apply-btn').text('已截止报名').attr('disabled','disabled').addClass('btn-disabled');
+			}else if(act_start_time < time){
+				$('.apply-btn').text('活动进行中').attr('disabled','disabled').addClass('btn-disabled');
+			}else if(act_end_time < time){
+				$('.apply-btn').text('活动已结束').attr('disabled','disabled').addClass('btn-disabled');
+			}else{
+				return;
+			}
+
+			// 美恰客服
+
+		});
+		// 美恰客服
+		(function(m, ei, q, i, a, j, s) {
+		    m[i] = m[i] || function() {
+		        (m[i].a = m[i].a || []).push(arguments)
+		    };
+		    j = ei.createElement(q),
+		        s = ei.getElementsByTagName(q)[0];
+		    j.async = true;
+		    j.charset = 'UTF-8';
+		    j.src = '//static.meiqia.com/dist/meiqia.js';
+		    s.parentNode.insertBefore(j, s);
+		})(window, document, 'script', '_MEIQIA');
+		_MEIQIA('entId', 31216);
+		_MEIQIA('withoutBtn');
+		//装备推荐
+		$(function(){
+			var mySwiper = new Swiper('.swiper-container',{
+				loop:false,
+				slidesPerView : 2,
+				slidesPerGroup : 2,
+				spaceBetween: '4%',
+				prevButton:'.suit-list-prev',
+				nextButton:'.suit-list-next',
+
+			})
+		});
+
+
+
+
+	</script>
+	<!-- 微信分享 -->
+	<script src="{G_TEMPLATES_JS}/mobile/jweixin.js"  language="javascript"  type="text/javascript"></script>
+	<script type="text/javascript">
+
+	  wx.config({
+	    debug: false,
+	    appId: "{wc:php:start} echo $wechat['appid'];{wc:php:end}",
+	    timestamp: {wc:php:start} echo $signPackage["timestamp"];{wc:php:end},
+	    nonceStr: '{wc:php:start} echo $signPackage["nonceStr"];{wc:php:end}',
+	    signature: '{wc:php:start} echo $signPackage["signature"];{wc:php:end}',
+	    jsApiList: ["checkJsApi", "onMenuShareAppMessage", "onMenuShareTimeline", "onMenuShareWeibo", "onMenuShareQQ"]
+	  });
+	wx.ready(function () {
+	var n = window.location.href+"/{wc:$uid}";
+	var shareTitle = "{wc:$shareInfo['title']}" || "{wc:$activity['act_title']}";
+	var shareDesc = "{wc:$share_desc}" || $('.activity-detail p').text();
+	var shareIconUrl = "{G_UPLOAD_PATH}/{wc:$shareInfo['icon']}" || "{G_UPLOAD_PATH}/{wc:$activity['act_poster']}" || "{G_TEMPLATES_IMAGE}/shop/shareIcon.png";
+	// var shareSuccess = function(){
+	//   alert('分享成功');
+	// };
+
+	// var shareCancel = function(){
+	//   alert('已取消');
+	// }
+	    wx.onMenuShareTimeline({
+	        title: shareTitle, // 分享标题
+	        link: n, // 分享链接
+	        imgUrl: shareIconUrl, // 分享图标
+	        // success: shareSuccess,
+	        // cancel: shareCancel
+	    });
+	    wx.onMenuShareAppMessage({
+	        title: shareTitle, // 分享标题
+	        desc: shareDesc, // 分享描述
+	        link: n, // 分享链接
+	        imgUrl: shareIconUrl, // 分享图标
+	        type: '', // 分享类型,music、video或link，不填默认为link
+	        dataUrl: '', // 如果type是music或video，则要提供数据链接，默认为空
+	         // success: shareSuccess,
+
+	        // cancel: shareCancel
+	    });
+	    wx.onMenuShareQQ({
+	        title: shareTitle, // 分享标题
+	        desc: shareDesc, // 分享描述
+	        link: n, // 分享链接
+	        imgUrl: shareIconUrl, // 分享图标
+	        type: '', // 分享类型,music、video或link，不填默认为link
+	        dataUrl: '', // 如果type是music或video，则要提供数据链接，默认为空
+	         // success: shareSuccess,
+
+	        // cancel: shareCancel
+	    });
+	    wx.onMenuShareWeibo({
+	        title: shareTitle, // 分享标题
+	        desc: shareDesc, // 分享描述
+	        link: n, // 分享链接
+	        imgUrl: shareIconUrl, // 分享图标
+	        type: '', // 分享类型,music、video或link，不填默认为link
+	        dataUrl: '', // 如果type是music或video，则要提供数据链接，默认为空
+	         // success: shareSuccess,
+
+	        // cancel: shareCancel
+	    });
+
+	});
+	</script>
+</body>
+</html>

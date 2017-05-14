@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>开启通道</title>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="format-detection" content="telephone=no">
+<meta name="keywords" content="{wc:if isset($keywords)}{wc:$keywords}{wc:else}{wc:fun:_cfg("web_key")}{wc:if:end}" />
+<meta name="description" content="{wc:if isset($description)}{wc:$description}{wc:else}{wc:fun:_cfg("web_des")}{wc:if:end}" />
+<link rel="stylesheet" type="text/css" href="{G_TEMPLATES_CSS}/mobile/shake.css">
+</head>
+<style type="text/css">
+	body{
+		  background-image: -moz-radial-gradient( 50% 50%, circle closest-side, rgb(253,182,39) 0%, rgb(255,123,0) 100%);
+		  background-image: -webkit-radial-gradient( 50% 50%, circle closest-side, rgb(253,182,39) 0%, rgb(255,123,0) 100%);
+		  background-image: -ms-radial-gradient( 50% 50%, circle closest-side, rgb(253,182,39) 0%, rgb(255,123,0) 100%);
+
+		}
+
+	}
+</style>
+<body ontouchstart="" onmouseover="">
+	
+	<header class="lottery-title gateway-title">
+		<div class="title-belt"></div>
+		<div class="title-font"></div>
+	</header>
+	<div class="lottery-center">
+		<div class="gateway-bar">
+			<ul>
+				{wc:loop $gateWay $v}
+				<li class="gateway-lists clearfix">
+					<p class="{wc:$v['class_name']}"></p>
+					<a class="gateway-open {wc:if $v['p_start_state']==1}gateway-active{wc:if:end}" data-item="{wc:$v['p_id']}"></a>
+				</li>
+				{wc:loop:end}
+			</ul>
+		</div>
+	</div>
+	<script src="{G_TEMPLATES_JS}/mobile/jquery190.js" language="javascript" type="text/javascript"></script>
+	<script type="text/javascript">
+		$(function(){
+			var item;
+			var wsUri = "ws://127.0.0.1:9000/server.php";
+			websocket = new WebSocket(wsUri);
+			websocket.onopen = function(ev) { // connection is open
+				console.log('connection is open');
+			}
+			//websocket.send(JSON.stringify(msg));
+			var ele = $('.gateway-open');
+			ele.each(function(){
+				$(this).click(function(){
+					var obj = $(this);
+					item = $(this).data('item'); //通道id
+					if($(this).hasClass('gateway-active')){
+						alert('已开启通道，请勿重复操作')
+						return false;
+					}
+					else{
+						myconfirm("confirm","通道开启后不可关闭，确定开启该通道？",function () {
+							//发送ajax给设置开启通道
+							//setWayStatus(item);
+							$.ajax({
+								type:'POST',
+								url:'{G_WEB_PATH}/mobile/mobile/ajaxOpenPool',
+								data:{item:item},
+								dataType:'json',
+								success:function (msg) {
+									if(msg.state == 0){
+										var state = 1;
+										var time = msg.time;
+										obj.addClass('gateway-active');
+									}else if(msg.state ==2){
+										alert('已开启通道，请勿重复操作');
+										return;
+									}else{
+										alert('错误通道参数，请联系后台修复通道');
+										return;
+									}
+									var web_name = 'way'; //通道页面
+									var msg = {
+										item:item,
+										state:state,
+										web_name:web_name,
+										time:time
+									};
+									console.log(msg);
+									websocket.send(JSON.stringify(msg)); //发送通道状态
+								}
+							});
+						});
+					}
+				})
+
+			});
+			//#### Message received from server?
+			websocket.onmessage = function(ev) {
+				var msg = JSON.parse(ev.data); //PHP sends Json data
+				var type = msg.type; //message type
+				var umsg = msg.message; //message text
+				if(type == 'system')
+				{
+					console.log('System status -'+umsg);
+				}
+			};
+			websocket.onerror = function(ev){
+				console.log('Error Occurred -'+ev.data);
+			};
+			websocket.onclose = function(ev){
+				console.log('Client notified socket has closed',ev);
+			};
+
+			/*function setWayStatus(item) {
+				$.ajax({
+					type:'POST',
+					url:'{G_WEB_PATH}/mobile/mobile/ajaxOpenPool',
+					data:{item:item},
+					dataType:'json',
+					success:function (msg) {
+						return;
+					}
+				});
+			}*/
+		})
+
+		/**
+		 * 确认提示框
+		 * @param type string 弹窗类型：confirm和alert
+		 * @param p string 弹窗信息
+		 * @param funok obj 回调函数
+		 * @returns {boolean}
+		 */
+		function myconfirm(type,p,funok){
+			var div='<div class="confirmWrap"><div class="confirmBar"><p>'+p+'</p>';
+			if(type=='confirm'){
+				div+='<a class="confirm-cancel" href="javascript:;">取消</a><a class="confirm-ensure" href="javascript:;">确定</a></div></div>';
+			}
+			else if(type=='alert'){
+				div+='<a class="alert-ensure" href="javascript:;">确定</a></div></div>';
+			}
+
+			$('body').append(div);
+
+			var cancel=$('.confirm-cancel');
+			var confirm=$('.confirm-ensure');
+			var alertsure=$('.alert-ensure');
+			var bar=$('.confirmWrap');
+			bar.show();
+			cancel.on('click',function(){
+				bar.remove();
+				return false;
+			})
+			alertsure.on('click',function(){
+				funok();
+				bar.remove();
+				return false;
+
+			})
+			confirm.on('click',function(){
+				funok();
+				bar.remove();
+				confirm.off('click');
+				return false;
+			})
+			return false;
+		}
+	</script>
+	
+</body>
+</html>

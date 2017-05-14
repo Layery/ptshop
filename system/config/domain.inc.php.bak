@@ -1,0 +1,24 @@
+<?php 
+
+return array (
+    'zxyl.huanleegou.cn' =>
+        array (
+        'm' => 'mobile',
+        'c' => 'mobile',
+        'a' => 'welcome',
+        ),
+    'dingmaomedia.cn' =>
+        array (
+            'm' => 'mobile',
+            'c' => 'mobile',
+            'a' => 'welcome',
+        ),
+	'www.mapshop.com' =>
+        array (
+            'm' => 'mobile',
+            'c' => 'mobile',
+            'a' => 'init',
+        ),
+);
+
+?>

@@ -1,0 +1,492 @@
+<?php defined('G_IN_ADMIN')or exit('No permission resources.'); ?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>后台首页</title>
+<link rel="stylesheet" href="<?php echo G_GLOBAL_STYLE; ?>/global/css/global.css" type="text/css">
+<link rel="stylesheet" href="<?php echo G_GLOBAL_STYLE; ?>/global/css/style.css" type="text/css">
+<script src="<?php echo G_GLOBAL_STYLE; ?>/global/js/jquery-1.8.3.min.js"></script>
+<script src="<?php echo G_PLUGIN_PATH; ?>/uploadify/api-uploadify.js" type="text/javascript"></script> 
+<link rel="stylesheet" href="<?php echo G_PLUGIN_PATH; ?>/calendar/calendar-blue.css" type="text/css"> 
+<script type="text/javascript" charset="utf-8" src="<?php echo G_PLUGIN_PATH; ?>/calendar/calendar.js"></script>
+<script type="text/javascript">
+var editurl=Array();
+editurl['editurl']='<?php echo G_PLUGIN_PATH; ?>/ueditor/';
+editurl['imageupurl']='<?php echo G_ADMIN_PATH; ?>/ueditor/upimage/';
+editurl['imageManager']='<?php echo G_ADMIN_PATH; ?>/ueditor/imagemanager';
+</script>
+<script type="text/javascript" charset="utf-8" src="<?php echo G_PLUGIN_PATH; ?>/ueditor/ueditor.config.js"></script>
+<script type="text/javascript" charset="utf-8" src="<?php echo G_PLUGIN_PATH; ?>/ueditor/ueditor.all.min.js"></script>
+<style>
+	.bg{background:#fff url(<?php echo G_GLOBAL_STYLE; ?>/global/image/ruler.gif) repeat-x scroll 0 9px }
+	.color_window_td a{ float:left; margin:0px 10px;}
+
+	.con-tab{ margin:10px; color:#444}
+	.con-tab #tab-i{ margin-left:20px; overflow:hidden; height:27px; _height:28px; }
+	.con-tab #tab-i li{
+		float:left;background:#eaeef4;
+		padding:0 8px;border:1px solid #dce3ed;
+		height:25px;_height:26px;line-height:26px;
+		margin-right:5px;cursor: pointer; position:relative;z-index:0;
+	}
+	.con-tab div.con-tabv{
+		clear:both; border:1px solid #dce3ed;
+		width:100%;
+		margin-top:-1px; padding-top:20px;
+		background-color:#fff; position:relative; z-index:1;}
+
+	#tab-i li.on{ background-color:#fff;color:#444; font-weight:bold; border-bottom:1px solid #fff;  position:relative;z-index:2;}
+
+	table th{ border-bottom:1px solid #eee; font-size:12px; font-weight:100; text-align:right; width:200px;}
+	table td{ padding-left:10px;}
+	.con-tabv tr{ text-align:left}
+	input.button{ display:inline-block}
+	.btn{
+		border-radius: 3px;
+		border: 1px solid transparent;
+		display: inline-block;
+		padding: 6px 12px;
+		text-align: center;
+		vertical-align: middle;
+		cursor: pointer;
+		background-color: #e7e7e7;
+	}
+	.btn-default:hover{
+		background-color: #adadad;
+	}
+	.btn-success{
+		background-color: #D80000;
+		color: #fff;
+	}
+	.btn-success:hover{
+		background-color: rgb(172, 0, 0);
+	}
+	.spec-img{
+		display: inline-block;
+		width:32px;
+		height:32px;
+		text-align: center;
+		vertical-align: middle;
+		cursor: pointer;
+		border: 1px solid transparent;
+	}
+	.spec-img:hover{
+		transform: scale(1.05);
+		-webkit-transform: scale(1.05);
+		-moz-transform: scale(1.05);
+		-o-transform: scale(1.05);
+		-ms-transform: scale(1.05);
+	}
+	.showImg{
+		display: inline-block;
+		background:url("<?php echo G_GLOBAL_STYLE?>/global/image/setting.png") no-repeat center center;
+		background-size: 100% 100%;
+		width:20px;
+		height: 20px;
+		vertical-align: middle;
+		margin: 0 5px;
+		cursor: pointer;
+	}
+	.showImg:hover{
+		transform: scale(1.1);
+		-webkit-transform: scale(1.1);
+		-moz-transform: scale(1.1);
+		-o-transform: scale(1.1);
+		-ms-transform: scale(1.1);
+	}
+	.img{
+		width: 20px;
+		height: 20px;
+		vertical-align: middle;
+		cursor: pointer;
+	}
+	.img:hover{
+		transform: scale(1.1);
+		-webkit-transform: scale(1.1);
+		-moz-transform: scale(1.1);
+		-o-transform: scale(1.1);
+		-ms-transform: scale(1.1);
+	}
+
+	/* ueditor的字体和字号下拉显示样式 */
+	.edui-popup-content.edui-default{
+		height: auto !important;
+	}
+
+	.address-tips{
+		position: absolute ;
+		left:140px;
+		background-color: #fff;
+		width:307px;
+		overflow: auto;
+		height:200px;
+	}
+	.address-tips li{
+		height: 18px;
+		margin: 0 5px 0 0;
+		padding: 2px 0 2px 5px;
+		white-space: nowrap;
+	}
+	.address-tips li:hover{
+		background-color: #d4d4d4;
+	}
+
+	.latlng{
+		color: #FFF;
+		background: #aaa;
+		border: 0px;
+		height: 30px;
+		border-top: 0px;
+		border-left: 0px;
+		border-bottom: 0px solid #666;
+		border-right: 0px solid #666;
+		padding: 0px 20px;
+		font-size: 12px;
+		line-height: 30px;
+		display: inline-block;
+		border-radius: 5px;
+	}
+	.latlng:hover{
+		background: #444;
+	}
+
+	img{
+		width: 21px;
+		height: 21px;
+		cursor: pointer;
+	}
+	img:hover{
+		transform: scale(1.2);
+		-webkit-transform: scale(1.2);
+		-moz-transform: scale(1.2);
+		-o-transform: scale(1.2);
+		-ms-transform: scale(1.2);
+	}
+	.act-charge{
+		margin-bottom:6px;
+	}
+
+</style>
+</head>
+<body>
+<script>
+
+function CheckForm(){
+	var money = parseInt($("#money").val());
+	//alert(money);
+		if(money >= 100000){
+			window.parent.message("价格大于10万，商品添加会很慢,请耐心等待，不要关闭窗口!",1,5);
+		}	
+		return true;
+}
+
+function copythis(o){
+    //获取当前行
+    var curr_tr = $(o).parent();
+    var td = $(o).parent().parent();
+    var count = td.children().length;
+    //alert(count)
+    //判读img标签的src是否是add，如果是，就克隆，不是就删除
+    if($(o).attr('src').indexOf("asc.png") > 0){
+        //克隆当前行
+        var new_tr = curr_tr.clone();
+        var src = $(o).attr('src').replace(/asc.png/gi,'desc.png');
+        new_tr.find('img').attr('src',src); //更改图标
+        new_tr.find('img').attr('title','删除活动须知'); //更改title
+        new_tr.find('span').text(count+1+'.'); //更改序号
+        //把当前行的内容清空
+        new_tr.find('input').val('');
+        //把新行放到当前行的后面
+        td.append(new_tr);
+    }else{
+        //删除当前行
+        curr_tr.remove();
+    }
+}
+</script>
+<div class="header lr10">
+	<?php echo $this->headerment();?>
+</div>
+<div class="bk10"></div>
+
+<div class="table_form lr10 con-tab" id="con-tab">
+	<ul id="tab-i">
+		<li name="con-tabk">基本信息</li>
+	</ul>
+<form method="post" action="">
+	<div name='con-tabv' class="con-tabv">
+	<table width="100%" id="general-table" cellspacing="0" cellpadding="0">
+        <tr>
+			<td align="right" style="width:120px"><font color="red">*</font>活动主题：</td>
+			<td>
+            <input  type="text" id="title"  name="title" value="<?php echo $activity['act_title']?>" onKeyUp="return gbcount(this,100,'texttitle');" class="input-text wid400 bg">
+
+            <span style="margin-left:10px">还能输入<b id="texttitle">100</b>个字符</span>
+           
+            </td>
+		</tr>
+		<tr>
+			<td align="right" style="width:120px"><font color="red">*</font>活动时间：</td>
+			<td>
+				<input name="startTime" value="<?php echo date('Y-m-d H:i:s', $activity['act_start_time'])?>" type="text" id="posttime1" class="input-text posttime"  readonly="readonly" /> -
+				<input name="endTime" value="<?php echo date('Y-m-d H:i:s', $activity['act_end_time'])?>" type="text" id="posttime2" class="input-text posttime"  readonly="readonly" />
+				<script type="text/javascript">
+					date = new Date();
+					Calendar.setup({
+						inputField     :    "posttime1",
+						ifFormat       :    "%Y-%m-%d %H:%M:%S",
+						showsTime      :    true,
+						timeFormat     :    "24"
+					});
+					Calendar.setup({
+						inputField     :    "posttime2",
+						ifFormat       :    "%Y-%m-%d %H:%M:%S",
+						showsTime      :    true,
+						timeFormat     :    "24"
+					});
+				</script>
+			</td>
+		</tr>
+		<!--<tr>
+			<td align="right" style="width:120px"><font color="red">*</font>活动人数：</td>
+			<td><input type="text" name="num" onKeyUp="value=value.replace(/\D/g,'')" style="width:65px;padding-left:0px;text-align:center" class="input-text" >位　　<span class="lr10">人数为空默认不限制参与人数</span></td>
+		</tr>-->
+		<tr>
+			<td align="right" style="width:120px"><font color="red">*</font>活动地点：</td>
+			<td>
+				<input type="text" name="address" value="<?php echo $activity['act_address']?>" id="address" class="input-text wid300" />
+				<span class="lr10">根据输入的地点会自动获取经纬度</span>
+			</td>
+		</tr>
+		
+		<tr>
+			<td align="right" style="width:120px">活动坐标（经纬度）：</td>
+			<td>
+				<input type="text" name="latlng" value="<?php echo $activity['act_latlng']?>" name="latlng" id="latlng" class="input-text" />
+				<input type="button" class="latlng" value="坐标拾取器">
+				<span class="lr10">可以点击坐标拾取器获取经纬度，也可为空</span>
+			</td>
+		</tr>
+		<tr>
+			<td align="right" style="width:120px">报名设置：</td>
+			<td>
+				<label for="recommend"><input name="recommend" id="recommend" value="1" type="checkbox" <?php if($activity['act_recommend']){echo 'checked';}else{echo '';}?>/>&nbsp;推荐&nbsp;</label>&nbsp;
+				<label for="flag"><input name="flag" id="flag" value="1" type="checkbox" <?php if($activity['act_sign_flag']){echo 'checked';}else{echo '';}?>/>&nbsp;活动结束前均可报名</label>
+			</td>
+		</tr>
+		<tr>
+			<td align="right" style="width:120px"><font color="red">*</font>活动咨询方式设置：</td>
+			<td>
+				<input type="text" name="consult" value="<?php echo $activity['act_consult']?>" id="consult" class="input-text wid300" placeholder="请输入手机号、座机号（区号-座机号)"/>
+			</td>
+		</tr>
+
+        <tr>
+         <td align="right" style="width:120px"><font color="red">*</font>活动海报：</td>
+        <td>
+        	<img id="show-img" src="<?php echo G_UPLOAD_PATH.'/'.$activity['act_poster']; ?>" style="border:1px solid #eee; padding:1px; width:50px; height:50px;">
+           	<input type="text" id="imagetext" name="poster" value="<?php echo $activity['act_poster']?>" class="input-text wid300">
+			<input type="button" class="button"
+             onClick="GetUploadify('<?php echo WEB_PATH; ?>','uploadify','海报图上传','image','poster',1,500000,'imagetext','call_back')" value="上传图片"/>
+        </td>
+      	</tr>
+        <tr>
+            <td style="width: 120px;" align="right"><font color="red">*</font>活动须知</td>
+            <td>
+                <?php foreach ($notice as $k => $v){?>
+                <div class="act-charge">
+                    <?php if($k == 0){?>
+                    <span class="bullets">1.</span>
+                    <input type="text" name="notice[]" value="<?php echo $v['n_notice'];?>" id="num-of-people" class="input-text wid300" placeholder="活动须知内容" />
+                    <img src="<?php echo G_GLOBAL_STYLE.'/global/image/asc.png'?>" class="add-charge" onclick="copythis(this)" title="添加活动须知">
+                    <?php }else{?>
+                        <span class="bullets"><?php echo $k+1;?>.</span>
+                        <input type="text" name="notice[]" value="<?php echo $v['n_notice'];?>" id="num-of-people" class="input-text wid300" placeholder="活动须知内容" />
+                        <img src="<?php echo G_GLOBAL_STYLE.'/global/image/desc.png'?>" class="add-charge" onclick="copythis(this)" title="添加活动须知">
+                    <?php }?>
+                    <input type="hidden" name="n_id[]" value="<?php echo $v['n_id']?>">
+                </div>
+                <?php }?>
+            </td>
+        </tr>
+		<tr>
+        	<td height="300" style="width:120px"  align="right"><font color="red">*</font>活动详情：</td>
+			<td><script name="content" id="myeditor" type="text/plain">
+					<?php echo htmlspecialchars_decode($activity['act_content'])?>
+				</script>
+            	<style>
+				.content_attr {
+					border: 1px solid #CCC;
+					padding: 5px 8px;
+					background: #FFC;
+					margin-top: 6px;
+					width:915px;
+				}
+				</style>
+                <div class="content_attr">
+                <label><input name="sub_text_des" type="checkbox"  value="off" checked>是否截取内容</label>
+                <input type="text" name="sub_text_len" class="input-text" value="250" size="3">字符至内容摘要<label>         
+            	</div>
+            </td>        
+		</tr>
+	</table>
+	</div>
+	<div class="submit-btn" style="background:#f6f6f6;margin-top: 10px;padding: 5px 140px;">
+        <input type="hidden" name="act_id" value="<?php echo $activity['act_id']?>">
+		<input type="submit" name="dosubmit" class="button" value="修改">
+		<input type="reset" class="button" value="重置">
+	</div>
+</form>
+
+	<div class="lr10" style="width: 916px;background-color: #fff;position:absolute;top:364px;left: 140px;z-index: 99999;">
+		<iframe id='mapIframe' src="http://lbs.qq.com/tool/getpoint/getpoint.html" style="width: 100%;height: 650px;border: 0;display: none;" scrolling="no"></iframe>
+	</div>
+</div>
+ <span id="title_colorpanel" style="position:absolute; left:568px; top:155px" class="colorpanel"></span>
+<script type="text/javascript" src="<?php echo G_GLOBAL_STYLE; ?>/global/js/GgTab.js"></script>
+<script type="text/javascript">
+	Gg.Tab({i:"li con-tabk ~on",o:"div con-tabv",events:"click",num:1});
+
+	// 上传商品图片成功回调函数
+	function call_back(fileurl_tmp){
+		$("#show-img").attr('src','<?php echo G_UPLOAD_PATH;?>/'+fileurl_tmp);
+	}
+	function spec_call_back(fileurl_tmp,id){
+		$('#img-'+id).attr('src','<?php echo G_UPLOAD_PATH;?>/'+fileurl_tmp);
+	}
+
+    //实例化编辑器
+    var ue = UE.getEditor('myeditor');
+
+    ue.addListener('ready',function(){
+        this.focus()
+    });
+    function getContent() {
+        var arr = [];
+        arr.push( "使用editor.getContent()方法可以获得编辑器的内容" );
+        arr.push( "内容为：" );
+        arr.push(  UE.getEditor('myeditor').getContent() );
+        alert( arr.join( "\n" ) );
+    }
+    function hasContent() {
+        var arr = [];
+        arr.push( "使用editor.hasContents()方法判断编辑器里是否有内容" );
+        arr.push( "判断结果为：" );
+        arr.push(  UE.getEditor('myeditor').hasContents() );
+        alert( arr.join( "\n" ) );
+    }
+	
+	var info=new Array();
+    function gbcount(message,maxlen,id){
+		
+		if(!info[id]){
+			info[id]=document.getElementById(id);
+		}			
+        var lenE = message.value.length;
+        var lenC = 0;
+        var enter = message.value.match(/\r/g);
+        var CJK = message.value.match(/[^\x00-\xff]/g);//计算中文
+        if (CJK != null) lenC += CJK.length;
+        if (enter != null) lenC -= enter.length;		
+		var lenZ=lenE+lenC;		
+		if(lenZ > maxlen){
+			info[id].innerHTML=''+0+'';
+			return false;
+		}
+		info[id].innerHTML=''+(maxlen-lenZ)+'';
+    }
+	
+function set_title_color(color) {
+	$('#title2').css('color',color);
+	$('#title_style_color').val(color);
+}
+function set_title_bold(){
+	if($('#title_style_bold').val()=='bold'){
+		$('#title_style_bold').val('');	
+		$('#title2').css('font-weight','');
+	}else{
+		$('#title2').css('font-weight','bold');
+		$('#title_style_bold').val('bold');
+	}
+}
+
+	/**
+	 * 商品规格
+	 */
+	$(function () {
+
+		//根据输入的地点获取全称
+		$('#address').keyup(function () {
+			var self = $(this);
+			var keyword = $(this).val();
+			if(keyword == ''){
+				return
+			}
+			var tag = '';
+			//console.log(keyword);
+			$('#address-tips').remove();
+			$.ajax({
+				type:'get',
+				url:'<?php echo G_ADMIN_PATH?>/map/ajaxGetAddress/',
+				dataType:'json',
+				data:{keyword:keyword},
+				success:function (msg) {
+					if(msg.status==0){
+						console.log(msg.data)
+						tag += '<ul id="address-tips" class="address-tips">';
+						for(var i in msg.data){
+							tag += '<li data-lat="'+msg.data[i].location.lat+'" data-lng="'+msg.data[i].location.lng+'">'+msg.data[i].title+'</li>';
+						}
+						tag += '</ul>';
+						self.after(tag);
+					}
+				}
+			})
+		})
+		$('#address').focus(function () {
+			var self = $(this);
+			var keyword = $(this).val();
+			if(keyword == ''){
+				return
+			}
+			var tag = '';
+			//console.log(keyword);
+			$('#address-tips').remove();
+			$.ajax({
+				type:'get',
+				url:'<?php echo G_ADMIN_PATH?>/map/ajaxGetAddress/',
+				dataType:'json',
+				data:{keyword:keyword},
+				success:function (msg) {
+					if(msg.status==0){
+						console.log(msg.data)
+						tag += '<ul id="address-tips" class="address-tips">';
+						for(var i in msg.data){
+							tag += '<li data-lat="'+msg.data[i].location.lat+'" data-lng="'+msg.data[i].location.lng+'">'+msg.data[i].title+'</li>';
+						}
+						tag += '</ul>';
+						self.after(tag);
+					}
+				}
+			})
+		})
+		$(document).on('click','#address-tips li',function(){
+			var val = $(this).text();
+			var latlng = $(this).data('lat')+','+$(this).data('lng');
+			$('#address').val(val);
+			$(this).parent().remove();
+			$('#latlng').val(latlng);
+		})
+
+		//坐标拾取器
+		$('.latlng').click(function () {
+			$('#mapIframe').toggle(1000)
+		})
+	})
+
+//API JS
+//window.parent.api_off_on_open('open');
+</script>
+</body>
+</html>

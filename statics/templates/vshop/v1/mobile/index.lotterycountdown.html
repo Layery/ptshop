@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en" style="height: 100%;">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<head>
+	<meta charset="utf-8">
+	<title>摇奖倒计时</title>
+	<style type="text/css">
+		*{
+			padding: 0;
+			margin: 0;
+		}
+		body{
+			background: url('{G_TEMPLATES_IMAGE}/shakepic/countdown-bg.png') no-repeat center center;
+			background-size: 100% 100%;
+		}
+		a{
+			text-decoration: none;
+			color: #fff;
+
+		}
+		#mycanvas{
+			position: absolute;
+			left: calc(50% - 300px);
+			bottom: 130px;
+			z-index: 10;
+		}
+		.controlItem{
+			display: block;
+			height: 20px;
+			width: 40px;
+			background-color: #003366;
+			position: absolute;
+			left: 10px;
+			top: 10px;
+			text-align: center;
+		}
+		body img{
+			display: block;
+			width: 50px;
+			height: 50px;
+			border-radius: 50%;
+			position: absolute;
+			z-index: 2;
+		}
+
+	</style>
+</head>
+<body style="height: 100%;overflow: hidden;">
+	<canvas id='mycanvas'  >您的浏览器暂不支持，请更换浏览器再试！</canvas>
+	<a class="controlItem" id="controllBtn" href="javascript:;" style="display: none;">开始</a>
+
+</body>
+<script src="{G_TEMPLATES_JS}/mobile/jquery190.js" language="javascript" type="text/javascript"></script>
+<!-- 图片显示 -->
+<script type="text/javascript">
+	/*$(function(){
+		setInterval(addImg,500);
+	})*/
+	function addImg(img){
+		console.log(img);
+
+		var bH = $(window).height(),
+			bW = $(window).width(),
+			posLeft = Math.ceil(Math.random()*bW),
+			posTop = Math.ceil(Math.random()*bH);
+		var canL = $('#mycanvas').position().left;
+			canT = $('#mycanvas').position().top;
+			console.log(canT);
+
+			if(posLeft > bW - 50){
+				posLeft = bW - 50;
+			}
+			if(posTop > bH - 50){
+				posTop = bH -50;
+			}
+		var image = "<img class='imgs' style='left:"+posLeft+"px;top:"+posTop+"px;' src='"+img+"' >";
+		// $('.imgs').css({
+		// 	"top":posTop,
+		// 	"left":posLeft
+		// })
+		$('body').append(image);
+	}
+</script>
+<script type="text/javascript" src='{G_TEMPLATES_JS}/mobile/numarr.js'></script>
+<!-- 倒计时 -->
+<script type="text/javascript">
+	var CH=170,
+		CW=600,
+		R=8,
+		TOP=50,
+		LEFT=50;
+
+		//alert(state)
+	var endTime=new Date();
+		//endTime.setTime(endTime.getTime() + 600*1000);//时间
+
+	var currentTime=0;
+	var balls=[];
+	const colors=['#ff464e','#f60','#44b5e5','#099c','#a6c','9c0','#690','fb3','f44','c00'];
+	var item;
+	var time;
+
+	window.onload=function(){
+		//var flag=false;
+		var wsUri = "ws://127.0.0.1:9000/server.php";
+		websocket = new WebSocket(wsUri);
+
+		websocket.onopen = function(ev) { // connection is open
+			console.log('connection is open');//notify user
+		}
+		//#### Message received from server?
+		websocket.onmessage = function(ev) {
+			var msg = JSON.parse(ev.data); //PHP sends Json data
+			var type = msg.type; //message type
+			var umsg = msg.message; //message text
+			item = msg.item;  //奖项id
+			var state = msg.state;
+			var img = msg.img;
+			var web_name = msg.web_name; //用来识别是那个页面的状态
+			time = msg.time; //倒计时时间
+			console.log(msg);
+			if(type == 'usermsg')
+			{   //回调处理抽奖按钮
+				if(web_name == 'way' && state ==1){
+					//endTime.setTime(endTime.getTime() + time*60*1000);//时间
+//					flag = true; //开启倒计时
+					$('#controllBtn').trigger('click');
+				}
+				if(web_name == 'shake'){
+					addImg(img); //摇一摇显示头像
+				}
+			}
+			if(type == 'system')
+			{
+				console.log('System status -'+umsg);
+			}
+		};
+		websocket.onerror	= function(ev){console.log('Error Occurred -'+ev.data);};
+		websocket.onclose 	= function(ev){console.log('Client notified socket has closed',ev);};
+
+
+
+			// CH=document.body.clientHeight;
+			// CW=document.body.clientWidth;
+			LEFT=Math.round(CW/8);
+			R=Math.round(CW*4/5/108)-1;
+			TOP=Math.round(CW/16);
+
+
+		var canvas=document.getElementById('mycanvas');
+		canvas.height=CH;
+		canvas.width=CW;
+		var context=canvas.getContext('2d');
+		currentTime=getCurrentTime();
+		countDown(context);
+		var btn = $('#controllBtn');
+		btn.click(function() {
+			endTime = new Date();
+			endTime.setTime(endTime.getTime() + time*60*1000);//时间
+
+			setInterval(function () {
+				countDown(context);
+				update();
+			}, 50);
+		});
+
+
+		
+
+	}
+	function update(){
+		var nextTime=getCurrentTime();
+		var nexthour=parseInt(nextTime/3600),
+			nextminute=parseInt((nextTime-nexthour)/60),
+			nextsecond=parseInt(nextTime%60);
+		var prehour=parseInt(currentTime/3600),
+			preminute=parseInt((currentTime-prehour)/60),
+			presecond=parseInt(currentTime%60);
+		if (nextsecond!=presecond) {
+			if(parseInt(prehour/10)!=parseInt(nexthour/10)){
+				addball(LEFT,TOP,parseInt(prehour/10));
+			}
+			if(parseInt(prehour%10)!=parseInt(nexthour%10)){
+				addball(LEFT+15*(R+1),TOP,parseInt(prehour%10));
+			}
+			if(parseInt(preminute/10)!=parseInt(nextminute/10)){
+				addball(LEFT+39*(R+1),TOP,parseInt(preminute/10));
+			}
+			if(parseInt(preminute%10)!=parseInt(nextminute%10)){
+				addball(LEFT+54*(R+1),TOP,parseInt(preminute%10));
+			}
+			if(parseInt(presecond/10)!=parseInt(nextsecond/10)){
+				addball(LEFT+78*(R+1),TOP,parseInt(presecond/10));
+			}
+			if(parseInt(presecond%10)!=parseInt(nextsecond%10)){
+				addball(LEFT+93*(R+1),TOP,parseInt(presecond%10));
+			}
+			currentTime=nextTime;
+			if(currentTime == 0){
+				window.location.href = "{WEB_PATH}/mobile/mobile/showlottery/";
+			}
+
+		}
+		updateballs();
+
+	}
+	function updateballs(){
+		for(var i=0;i<balls.length;i++){
+			balls[i].x+=balls[i].vx;
+			balls[i].y+=balls[i].vy;
+			balls[i].vy+=balls[i].g;
+			if(balls[i].y>CH-R){
+				balls[i].y=CH-R;
+				balls[i].vy=-balls[i].vy*0.75;
+			}
+
+		}
+		var cont=0;
+		//console.log(balls.length);
+
+		for(var i=0;i<balls.length;i++)
+			if(balls[i].x+R>0 && balls[i].x-R<CW){
+				balls[cont++]=balls[i];
+			}
+			while(balls.length>Math.min(300,cont)){
+				balls.pop();
+			}
+		
+	}
+
+	function addball(x,y,n){
+		for(var i=0;i<num[n].length;i++){
+			for(var j=0;j<num[n][i].length;j++){
+				if(num[n][i][j]==1){
+					var ball={
+						x:x+(R+1)*j*2+(R+1),
+						y:y+(R+1)*i*2+(R+1),
+						g:1.5+Math.random(),
+						vx:Math.pow(-1,Math.ceil(Math.random()*1000))*4,
+						vy:-5,
+						color:colors[Math.floor(Math.random()*colors.length)]
+					}
+					balls.push(ball);
+				}
+
+
+
+
+			}
+
+		}
+
+	}
+
+	function countDown( context){
+
+		context.clearRect(0,0,CW,CH);
+		var bgcolor = context.createLinearGradient(0,85,600,85);
+			bgcolor.addColorStop(0,'rgba(33,54,79,0)');
+			bgcolor.addColorStop(0.2,'rgba(33,54,79,0.5)');
+			bgcolor.addColorStop(0.8,'rgba(33,54,79,0.5)');
+			bgcolor.addColorStop(1,'rgba(33,54,79,0)');
+
+
+		context.fillStyle = bgcolor;
+		context.fillRect(0,0,CW,CH);
+		var hour=parseInt(currentTime/3600),
+			minute=parseInt((currentTime-hour*3600)/60),
+			second=parseInt(currentTime%60);
+
+		draw(LEFT,TOP,parseInt(hour/10),context);
+		draw(LEFT+15*(R+1),TOP,parseInt(hour%10),context);
+		draw(LEFT+30*(R+1),TOP,10,context);
+		draw(LEFT+39*(R+1),TOP,parseInt(minute/10),context);
+		draw(LEFT+54*(R+1),TOP,parseInt(minute%10),context);
+		draw(LEFT+69*(R+1),TOP,10,context);
+		draw(LEFT+78*(R+1),TOP,parseInt(second/10),context);
+		draw(LEFT+93*(R+1),TOP,parseInt(second%10),context);
+		
+
+
+		for(var i=0; i<balls.length;i++){
+			context.fillStyle=balls[i].color;
+			context.beginPath();
+			context.arc(balls[i].x,balls[i].y,R,0,Math.PI*2);
+			context.closePath();
+			context.fill();
+		}
+
+	}
+	function getCurrentTime(){
+		var date=new Date();
+		var Time=endTime.getTime()-date.getTime();
+		Time=Math.round(Time/1000);
+
+		return Time >= 0 ? Time : 0 ;
+	}
+	function draw(x,y,n,context){
+	
+		for(var i=0;i<num[n].length;i++){
+			for(var j=0;j<num[n][i].length;j++){
+				if(num[n][i][j]==1){
+					context.beginPath();
+					context.fillStyle='#fff';//时钟颜色
+					context.arc(x+(R+1)*j*2+(R+1),y+(R+1)*i*2+(R+1),R,0,Math.PI*2);
+					context.closePath();
+					context.fill();
+				}
+			}
+
+		}
+	}
+</script>
+</html>

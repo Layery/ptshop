@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+	<title>美食概览-多点标注</title>
+	<script charset="utf-8" src="http://map.qq.com/api/js?v=2.exp&key=YGRBZ-KWXRX-YEW4O-T5RBE-C2UVK-CGBJ3"></script>
+	<script type="text/javascript" src='https://3gimg.qq.com/lightmap/components/geolocation/geolocation.min.js'></script>
+
+
+	<style type="text/css">
+
+		*{
+			margin:0;
+			padding:0;
+		}
+		body,html{
+			height: 100%;
+			width: 100%;
+			font-family: 'Microsoft yahei','黑体','Arial';
+		}
+		a{
+			text-decoration: none;
+		}
+		.title{
+			display: block;
+			font-size: 16px;
+		    line-height: 26px;
+		    color: #0079ff;
+		    font-weight: bold;
+		    
+		}
+		.address{
+			display: block;
+		    font-size: 13px;
+		    line-height: 18px;
+		    color: #8a8d8f;
+		    clear: both;
+		}
+		.come{
+			float: right;
+			display: flex;
+			display: -webkit-flex;
+
+			-ms-align-items: center;
+			align-items: center;
+			height: 34px;
+			width: 45%;
+			line-height: 34px;
+			font-size: 15px;
+			background-color: #0079ff;
+			color:#fff;
+			border-radius: 5px;
+			padding-right: 5px;
+
+		}
+		.come i{
+			display: inline-block;
+			height: 30px;
+			width: 30px;
+			background: url({wc:G_TEMPLATES_IMAGE}/map/arrow.png) no-repeat center center;
+			background-size: 100% 100%;
+		}
+		.telNum{
+				display: block;
+			    font-size: 13px;
+			    line-height: 18px;
+			    color: #8a8d8f;
+			    clear: both;
+		}
+		.telNum a{
+			color: #0079ff;
+		}
+		.infow-left{
+
+		}
+		.infow-right{
+			padding-top: 5px;
+			clear: both;
+			overflow: hidden;
+			width: 100%;
+		}
+		.infow{
+			white-space:nowrap;
+			margin:2px;
+			overflow: hidden;
+
+		}
+		.streetview{
+			float: left;
+			display: flex;
+			display: -webkit-flex;
+			-ms-align-items: center;
+			align-items: center;
+			line-height: 34px;
+			font-size: 15px;
+			background-color: #0079ff;
+			color:#fff;
+			border-radius: 5px;
+			height: 34px;
+			width: 45%;
+		}
+		.streetview i{
+			display: inline-block;
+			height: 30px;
+			width: 30px;
+			background: url({wc:G_TEMPLATES_IMAGE}/map/view.png) no-repeat center center;
+			background-size: 100% 100%;
+
+		}
+	</style>
+</head>
+<body onload="init()">
+	<div id='container' style="width: 100%;height: 100%;"></div>
+
+	<script type="text/javascript">
+	function init(){
+		var spointy,spointx;
+		//
+		//var center = new qq.maps.LatLng(39.916527,116.397128);
+		var map = new qq.maps.Map(document.getElementById('container'),{
+			//center:center,
+			zoom:13
+		});
+		/*var key = 'YGRBZ-KWXRX-YEW4O-T5RBE-C2UVK-CGBJ3';
+		var referer = 'demo';*/
+        var key = "{wc:$appInfo['key']}";
+		var referer = "{wc:$appInfo['app_name']}";
+		
+		  
+		var infos= {wc:$markInfo};
+		console.log(infos);
+
+       	//获取所在城市中心坐标
+         citylocation = new qq.maps.CityService({
+         	complete : function(result){
+         		//map.setCenter(result.detail.latLng);
+         	}
+         });
+         citylocation.searchLocalCity();
+		//调用前端定位组件
+		geolocation = new qq.maps.Geolocation(key,referer);
+		//调用成功执行函数
+
+		geolocation.getLocation(showPosition,showerror);
+		function showPosition(position){
+			//map.setCenter(spointy,spointx);
+			spointx = position.lng;
+			spointy = position.lat;
+			// var newcenter =new qq.maps.LatLng(spointy,spointx);
+			// map.setCenter(newcenter);
+			for (var i in infos){
+					myMarker(infos[i].latlng,infos[i].name,infos[i].tel);
+			}
+       				
+		};
+		function showerror(){
+			for (var i in infos){
+				myMarker(infos[i].latlng,infos[i].name,infos[i].tel);
+			}
+				
+		};
+
+       	function myMarker(latlng,title,telnum){
+
+       		var geocoder = new qq.maps.Geocoder({
+       			complete:function(result){
+       				//标记全部打开
+					var pos = new qq.maps.LatLng(latlng);
+					var infoWin = new qq.maps.InfoWindow({
+       					map:map,
+						zIndex:10,
+       				}); 
+      //  				var infoWin1 = new qq.maps.InfoWindow({
+      //  					map:map,
+						// zIndex:2
+      //  				});
+
+					var marker = new qq.maps.Marker({
+						position: result.detail.location,
+						map:map,
+						icon:new qq.maps.MarkerImage("{wc:G_TEMPLATES_IMAGE}/map/marker.png"),
+						//设置Marker被添加到Map上时的动画效果为反复弹跳
+						animation: qq.maps.MarkerAnimation.BOUNCE
+						//设置Marker被添加到Map上时的动画效果为从天而降
+						//animation:qq.maps.MarkerAnimation.DROP
+						//设置Marker被添加到Map上时的动画效果为落下
+						// animation:qq.maps.MarkerAnimation.DOWN
+						//设置Marker被添加到Map上时的动画效果为升起
+						//animation:qq.maps.MarkerAnimation.UP
+					});
+					map.setCenter(result.detail.location);
+
+       				var wpointx = result.detail.location.getLng();
+       				var wpointy = result.detail.location.getLat();
+       				// infoWin1.open();
+       				// infoWin1.setContent('<div style="white-space:nowrap;margin:2px;">'+'<span class="title">'+title+'</span></div>');
+
+       				// infoWin1.setPosition(result.detail.location);
+       				//街景查询
+
+       				var panoService = new qq.maps.PanoramaService();
+
+       				//点击标记
+       				// qq.maps.event.addListener(marker,'click',function(){
+
+       					//infoWin1.close();
+       					infoWin.open();
+       					//判断是否存在街景
+       					panoService.getPano(result.detail.location,100,function(res){
+       						if(res){
+   							infoWin.setContent('<div class="infow">'+'<div class="infow-left"><span class="title">'+title+'</span>'+'<span class="address">'+result.detail.address+'</span><span class="telNum">联系电话：<a  href="tel:'+telnum+'">'+telnum+'</a></span></div>'+'<div class="infow-right"><a class="streetview" href="http://apis.map.qq.com/tools/streetview?location='+wpointy+','+wpointx+'&key='+key+'&referer='+referer+'"><i></i>看街景'+'</a><a class="come" href="http://apis.map.qq.com/tools/routeplan/eword='+result.detail.address+'&epointx='+wpointx+'&epointy='+wpointy+'&spointx='+spointx+'&spointy='+spointy+'?referer='+referer+'&key='+key+'"><i></i>到这里'+'</a></div></div>');
+
+       						}
+       						else {
+       							infoWin.setContent('<div class="infow">'+'<div class="infow-left"><span class="title">'+title+'</span>'+'<span class="address">'+result.detail.address+'</span><span class="telNum">联系电话：<a  href="tel:'+telnum+'">'+telnum+'</a></span></div>'+'<div class="infow-right"><a class="come" href="http://apis.map.qq.com/tools/routeplan/eword='+result.detail.address+'&epointx='+wpointx+'&epointy='+wpointy+'&spointx='+spointx+'&spointy='+spointy+'?referer='+referer+'&key='+key+'"><i></i>到这里'+'</a></div></div>');
+
+       						}
+       					})
+
+           				infoWin.setPosition(result.detail.location);
+       				// });
+
+       				
+
+       				//关闭信息窗口
+       				// qq.maps.event.addListener(infoWin,'closeclick',function(){
+       					// infoWin1.open();
+       				// })
+
+       				
+
+       			}
+       		});
+       		var pointStr = latlng.split(',',2);
+       		var lat = parseFloat(pointStr[0]);
+       		var lng = parseFloat(pointStr[1]);
+       		var point = new qq.maps.LatLng(lat,lng);
+       		geocoder.getAddress(point);
+
+       	}
+
+
+	}
+
+
+	</script>
+</body>
+</html>

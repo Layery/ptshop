@@ -1,0 +1,1 @@
+Base.getScript("/statics/templates/vshop/js/BottomFun2.js");

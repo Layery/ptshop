@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+	<title>美食概览-多点标注</title>
+	<script charset="utf-8" src="http://map.qq.com/api/js?v=2.exp&key=YGRBZ-KWXRX-YEW4O-T5RBE-C2UVK-CGBJ3"></script>
+	<script type="text/javascript" src='https://3gimg.qq.com/lightmap/components/geolocation/geolocation.min.js'></script>
+
+
+	<style type="text/css">
+
+		*{
+			margin:0;
+			padding:0;
+		}
+		body,html{
+			height: 100%;
+			width: 100%;
+		    font-family: Helvetica,Tahoma,Verdana,"Microsoft Yahei",simsun,SimHei,Arial,sans-serif;
+		}
+		a{
+			text-decoration: none;
+		}
+		.map-lists-wrap{
+			overflow: auto;
+			height: 60%;
+			width: 100%;
+			border-bottom: 1px solid #999;
+			border-top: 1px solid #999;
+		}
+		.map-lists-wrap ul{
+			padding:0 10px;
+
+		}
+		.map-lists-wrap li{
+			border-bottom: 1px solid #999;
+			padding: 6px 0;
+			position: relative;
+		}
+		.map-lists-wrap li .distance{
+			font-size: 12px;
+			color: #999;
+			position: absolute;
+			top: 6px;
+			right: 5px;
+			line-height: 20px;
+		}
+		.map-lists-wrap li a{
+			display: block;
+			overflow: hidden;
+			font-style: normal;
+			/*color: #000;*/
+		}
+		.map-lists-wrap li h3{
+			font-size: 15px;
+			line-height: 20px;
+			color: #333;
+			font-weight: normal;
+		}
+		.map-lists-wrap li a p{
+			font-size: 13px;
+			color: #999;
+			line-height: 18px;
+			overflow:hidden;
+			text-overflow:ellipsis;
+			white-space:nowrap;
+			
+		}
+
+	</style>
+</head>
+<body onload="init()">
+	<div id='container' style="width: 100%;height: 40%;"></div>
+	<div class="map-lists-wrap">
+		<ul id="map-lists">
+
+		</ul>
+		
+	</div>
+
+<script type="text/javascript">
+		function init(){
+	        var key = "{wc:$appInfo['key']}";
+			var referer = "{wc:$appInfo['app_name']}";
+			var infos= {wc:$markInfo};
+			var spointx = 0;
+			var spointy = 0;
+			// console.log(infos);
+			var map = new qq.maps.Map(document.getElementById('container'),{
+				zoom:16,
+				scaleControl:true,
+				scaleControlOptions:{
+					position:qq.maps.ControlPosition.BOTTOM_RIGHT
+				}
+			});
+
+
+			var geolocation = new qq.maps.Geolocation(key,referer);
+
+			geolocation.getLocation(showPosition);
+			function showPosition(position){
+				//map.setCenter(spointy,spointx);
+				 spointx = position.lng; //当前位置经度
+				 spointy = position.lat; //当前位置维度
+				var newcenter =new qq.maps.LatLng(spointy,spointx);
+				map.setCenter(newcenter);
+				var marker = new qq.maps.Marker({
+					position:newcenter,
+					map:map,
+					icon: new qq.maps.MarkerImage("{wc:G_TEMPLATES_IMAGE}/map/marker.png")
+				});
+
+				//测算距离
+				var xmlhttp;
+				if (window.XMLHttpRequest)
+				{
+					//  IE7+, Firefox, Chrome, Opera, Safari 浏览器执行代码
+					xmlhttp=new XMLHttpRequest();
+				}
+				else
+				{
+					// IE6, IE5 浏览器执行代码
+					xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+				}
+				xmlhttp.onreadystatechange=function()
+				{
+					if (xmlhttp.readyState==4 && xmlhttp.status==200)
+					{
+						 console.log(xmlhttp.responseText);
+						var result = eval('('+xmlhttp.responseText+')');
+
+						console.log(result);
+						for(var i in result){
+
+						var dis =result[i].distance ? changeOneDecimal_f(result[i].distance/1000) :10;
+						
+						var pointStr = result[i].latlng.split(',',2);
+		       			var lat = parseFloat(pointStr[0]);//标记维度
+		       			var lng = parseFloat(pointStr[1]);//标记经度
+
+		       			var newli = document.createElement('li');
+		       				newli.innerHTML = '<a href="{WEB_PATH}/mobile/map/location/'+result[i].id+'"><h3>'+result[i].name+'</h3><p>'+result[i].address+'</p>';
+       					if(dis >= 10){
+		       				newli.innerHTML+='<span class="distance">10公里+</span></a>';
+       					}else if(dis < 1){
+       						dis =changeOneDecimal_f(result[i].distance);
+		       				newli.innerHTML+='<span class="distance">约'+dis+'m</span></a>';
+       					}else{
+		       				newli.innerHTML+='<span class="distance">约'+dis+'公里</span></a>';
+
+       					}
+						var wrap = document.getElementById('map-lists');
+							wrap.appendChild(newli);
+
+						}
+
+					}
+				}
+				xmlhttp.open('GET','{WEB_PATH}/mobile/map/ajaxMeasureDistance/?lat='+spointy+'&lng='+spointx+'&t=' + Math.random(),true);
+				xmlhttp.send();
+
+
+				// for(var i in infos){
+
+				// 	var dis
+				// 	var pointStr = infos[i].latlng.split(',',2);
+	   //     			var lat = parseFloat(pointStr[0]);//标记维度
+	   //     			var lng = parseFloat(pointStr[1]);//标记经度
+
+	   //     			var newli = document.createElement('li');
+	   //     				// newli.innerHTML = '<a href="{WEB_PATH}/mobile/map/location/'+infos[i].id+'"><h3>'+infos[i].name+'</h3><p>'+infos[i].address+'</p></a>';
+	   //     				newli.innerHTML = '<a href="{WEB_PATH}/mobile/map/location/'+infos[i].id+'"><h3>'+infos[i].name+'</h3><p>'+infos[i].address+'</p><span class="distance">约10公里</span></a>';
+
+				// 	// var li = '<a href="http://apis.map.qq.com/tools/routeplan/eword='+infos[i].address+'&epointx='+lng+'&epointy='+lat+'&spointx='+spointx+'&spointy='+spointy+'?referer='+referer+'&key='+key+'"><h3>'+infos[i].name+'</3></p>'+infos[i].address+'</p></a>';
+				// 	var wrap = document.getElementById('map-lists');
+				// 	wrap.appendChild(newli);
+
+				// }
+			     				
+			};
+
+			
+
+		}
+
+		function changeOneDecimal_f(x) {
+		    var f_x = parseFloat(x);
+
+		    var f_x = Math.round(x * 10) / 10;
+		    var s_x = f_x.toString();
+		    var pos_decimal = s_x.indexOf('.');
+		    if (pos_decimal < 0) {
+		        pos_decimal = s_x.length;
+		        s_x += '.';
+		    }
+		    while (s_x.length <= pos_decimal + 1) {
+		        s_x += '0';
+		    }
+		    return s_x;
+		}
+
+
+</script>
+</body>
+</html>

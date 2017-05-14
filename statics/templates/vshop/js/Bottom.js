@@ -1,0 +1,1 @@
+Base.getScript("/statics/templates/vshop/js/BottomFun.js?date=20141118");

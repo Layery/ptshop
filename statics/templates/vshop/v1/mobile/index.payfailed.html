@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+	<meta name="format-detection" content="telephone=no">
+	<meta name="keywords" content="{wc:if isset($keywords)}{wc:$keywords}{wc:else}{wc:fun:_cfg("web_key")}{wc:if:end}" />
+	<meta name="description" content="{wc:if isset($description)}{wc:$description}{wc:else}{wc:fun:_cfg("web_des")}{wc:if:end}" />
+	<title>支付失败</title>
+	<link rel="stylesheet" media="screen,projection,tv" href="{G_TEMPLATES_CSS}/mobile/main.css">
+	<link rel="stylesheet" type="text/css" href="{G_TEMPLATES_CSS}/mobile/activity.css">
+	<style type="text/css">
+		html,body{
+			height: 100%;
+			width: 100%;
+		}
+	</style>
+</head>
+<body>
+	<div class="pay-result-wrap">
+		<div class="pay-result-bar">
+			<h3>支付失败</h3>
+			<p>支付遇到问题，请尝试重新支付</p>
+			<div class='pay-result-btns'>
+				<a href="javascript:;" id="pay-cancel">取消</a>
+				<a href="javascript:;" id="pay-refresh">重新支付</a>
+			</div>
+		</div>
+	</div>
+
+	<script src="{G_TEMPLATES_JS}/mobile/jquery190.js" language="javascript" type="text/javascript"></script>
+	<script type="text/javascript">
+		$(function(){
+			$('a#pay-cancel').click(function(){
+				window.location.href = "{G_WEB_PATH}/mobile/mobile/activity";
+			})
+		})
+	</script>
+</body>
+</html>

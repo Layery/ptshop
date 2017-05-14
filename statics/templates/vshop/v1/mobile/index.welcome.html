@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>{wc:if isset($title)}{wc:$title}{wc:else}{wc:fun:_cfg("web_name")}{wc:if:end}</title>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="format-detection" content="telephone=no">
+<meta name="keywords" content="{wc:if isset($keywords)}{wc:$keywords}{wc:else}{wc:fun:_cfg("web_key")}{wc:if:end}" />
+<meta name="description" content="{wc:if isset($description)}{wc:$description}{wc:else}{wc:fun:_cfg("web_des")}{wc:if:end}" />
+<link rel="stylesheet" media="screen,projection,tv" href="{G_TEMPLATES_CSS}/mobile/main.css">
+<style>
+	html{
+
+		height: 100%;
+		width: 100%;
+	}
+	body{
+		background:url("{G_UPLOAD_PATH}/{wc:$wel_bg['img']}") no-repeat center center;
+		background-size: 100% 100%;
+		height: 100%;
+
+
+	}
+	.thewrap{
+		position: fixed;
+		width: 100%;
+		bottom: 10%;
+		left: 0;
+		z-index: 100;
+	}
+	.welcome-word{
+		padding:0 15px;
+		font-size: 23px;
+		color: #fff;
+	}
+	.welcome-word p{
+		line-height: 30px;
+		border-bottom: 1px solid #fff;
+		font-family: 'Microsoft yahei';
+
+	}
+	.listTabs{
+		padding: 20px 35px ;
+	}
+	.listTabs li{
+		text-align: center;
+		height: 43px;
+		width: 48%;
+		display: inline-block;
+		line-height: 43px;
+		margin-bottom: 15px;
+	}
+	.listTabs li a{
+		font-size: 21px;
+		color: #333;
+		font-family: '黑体';
+
+	}
+	.listTabs li:nth-child(even){
+		float: right;
+	}
+	.listTabs li:nth-child(old){
+		float: left;
+	}
+	.listTabs li{
+		background-color: rgba(255,255,255,0.75);
+	}
+	.listTabs li:hover{
+		background-color: #ff464e;
+		opacity: 0.75;
+	}
+	.listTabs li:hover a{
+		color: #fff;
+	}
+	.theList{
+		position: fixed;
+		bottom:25%;
+		left: 0;
+		width: 100%;
+		z-index: 100;
+	}
+	.enter{
+		display: inline-block;
+		width: 100%;
+		background-color: #fff;
+		text-align: center;
+		color: #000;
+		font-size: 21px;
+		height: 43px;
+		line-height: 43px;
+		margin-top: 25px;
+		font-family: '黑体';
+		opacity: 0.75;
+	}
+	.enter:hover{
+		color: #fff;
+		background-color: #ff464e;
+
+	}
+	.logos{
+		position: absolute;
+		left: 0;
+		width: 100%;
+		top:8%;
+		z-index: 100;
+		text-align: center;
+		height: 20%;
+
+	}
+	.logos span{
+		display: inline-block;
+		height: 95%;
+		width: 90%;
+		background: url("{G_TEMPLATES_IMAGE}/shop/welcomeLogo.png") no-repeat center center;
+		background-size: 100% 100%;
+	}
+	@media screen and (max-height: 560px){
+		.logos{
+			top: 3%;
+		}
+	}
+
+
+</style>
+
+</head>
+<body>
+	<div class="logos">
+		<span></span>
+		
+	</div>
+	<div class="theList">
+			<ul class="listTabs">
+			{wc:loop $interval $val}
+			<li><a href="{WEB_PATH}/mobile/mobile/init/{wc:$val['id']}">{wc:$val['interval_name']}</a></li>
+			{wc:loop:end}
+
+
+
+
+
+		</ul>
+		
+	</div>
+	<div class="thewrap">
+		<div class="welcome-word">
+			<p>Welcome</p>
+			<a class="enter" href="{WEB_PATH}/mobile/mobile">进入店铺</a>
+		</div>
+
+	</div>
+<script src="{G_TEMPLATES_JS}/mobile/jquery-2.1.4.min.js"></script>
+<script type="text/javascript">
+	window.onload=function(){
+
+		var obj = document;
+			var x,y,x1,y1,startX,startY;
+		obj.addEventListener('touchstart', function(event) {
+
+			// event.preventDefault();
+			var touch=event.targetTouches[0];
+			    x=Number(touch.pageX),
+				y=Number(touch.pageY);
+				 // console.log(x,y);
+			    startX=x,
+				startY=y;
+
+		        }, false);
+			obj.addEventListener('touchmove',function(event){
+				event.preventDefault();
+			var touch=event.targetTouches[0];
+			    x1=Number(touch.pageX),
+				y1=Number(touch.pageY);
+		    });
+
+			obj.addEventListener('touchend',function(){
+		        var movex=x1 - startX,
+		            movey=y1 - startY;
+				if(Math.abs(movex) > Math.abs(movey)){
+					return false;
+				}
+				if(Math.abs(movex) < Math.abs(movey)){
+			window.location.href="{WEB_PATH}/mobile/mobile";
+					
+				}
+
+			})
+	}
+	$(function(){
+		var lis=$('.listTabs').find('li');
+		if(lis.length%2 != 0){
+			lis.last().width('100%');
+
+		}
+	})
+</script>
+
+
+
+
+
+
+	
+</body></html>

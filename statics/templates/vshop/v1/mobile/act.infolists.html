@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>活动列表-报名信息查看</title>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="format-detection" content="telephone=no">
+<meta name="keywords" content="{wc:if isset($keywords)}{wc:$keywords}{wc:else}{wc:fun:_cfg('web_key')}{wc:if:end}" />
+<meta name="description" content="{wc:if isset($description)}{wc:$description}{wc:else}{wc:fun:_cfg('web_des')}{wc:if:end}" />
+<link rel="stylesheet" media="screen,projection,tv" href="{G_TEMPLATES_CSS}/mobile/main.css">
+<link rel="stylesheet" type="text/css" href="{G_TEMPLATES_CSS}/mobile/activity.css">
+</head>
+<body>
+	<header class="header-t">活动列表-报名信息</header>
+<!-- 	<ul class="nav-lists">
+		<li class="nav-lists-item "><span class="active" data-state="all">全部</span></li>
+		<li class="nav-lists-item"><span data-state="time">时间</span></li>
+		<li class="nav-lists-item"><span data-state="price">价格</span></li>
+	</ul> -->
+	<!-- <div style="height: 108px;"></div> -->
+	<section class="activities-wrap">
+		{wc:loop $activities $k $v}
+		<div class="activities-item">
+			<a href="{G_WEB_PATH}/mobile/mobile/checkinfos/{wc:$v['act_id']}">
+			<img src="{G_UPLOAD_PATH}/{wc:$v['act_poster']}">
+			<div class="activities-content">
+				<h4>{wc:$v['act_title']}</h4>
+				<p>{wc:fun:date('Y-m-d H:i:s',$v['act_start_time'])}至{wc:fun:date('Y-m-d H:i:s',$v['act_end_time'])}</p>
+				<div class="items-bottom"><span class="activities-addr">{wc:$v['act_address']}</span><span class="activities-cost">{wc:if $chargeInfo[$k]['c_money']=='0.00'}免费{wc:else}{wc:$chargeInfo[$k]['c_money']}{wc:if:end}</span></div>
+			</div>
+			</a>
+		</div>
+		{wc:loop:end}
+	</section>
+<script src="{G_TEMPLATES_JS}/mobile/jquery190.js" language="javascript" type="text/javascript"></script>
+
+<script type="text/javascript">  
+// 反广告嵌入
+ if (window!=top) // 判断当前的window对象是否是top对象  
+ top.location.href =window.location.href; // 如果不是，将top对象的网址自动导向被嵌入网页的网址  
+</script> 
+	
+</body>
+</html>

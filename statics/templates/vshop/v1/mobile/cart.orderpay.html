@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+    <title>确认订单</title>
+    <meta content="app-id=518966501" name="apple-itunes-app" />
+    <meta content="yes" name="apple-mobile-web-app-capable" />
+    <meta content="black" name="apple-mobile-web-app-status-bar-style" />
+    <meta content="telephone=no" name="format-detection" />
+    <link href="{G_TEMPLATES_CSS}/mobile/comm.css" rel="stylesheet" type="text/css" /><link href="{G_TEMPLATES_CSS}/mobile/cartList.css" rel="stylesheet" type="text/css" />
+	<script src="{G_TEMPLATES_JS}/mobile/jquery190.js" language="javascript" type="text/javascript"></script>
+	<script id="pageJS" data="{G_TEMPLATES_JS}/mobile/orderpay.js" language="javascript" type="text/javascript"></script>
+
+	<!-- <script src="{G_TEMPLATES_JS}/mobile/straight.js" language="javascript" type="text/javascript"></script> -->
+	
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?3467e923fe63a9c0d612efb4d9309c8d";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+</head>
+<body style="height:100%;">
+<div class="h5-1yyg-v1">
+    
+<!-- 栏目页面顶部 -->
+
+
+<!-- 内页顶部 -->
+
+    <header class="g-header">
+        <div class="head-l">
+	        <a href="javascript:;" onclick="history.go(-1)" class="z-HReturn"></a>
+        </div>
+        <h2>确认订单</h2>
+
+    </header>
+
+    <input name="hidShopMoney" type="hidden" id="hidShopMoney" value="{wc:$MoenyCount}" />
+    <input name="hidBalance" type="hidden" id="hidBalance" value="{wc:$Money}" />
+    <input name="hidPoints" type="hidden" id="hidPoints" value="{wc:$member['score']}" />
+    <input name="shopnum" type="hidden" id="shopnum" value="{wc:$shopnum}" />
+    <input name="pointsbl" type="hidden" id="pointsbl" value="{wc:$fufen_dikou}" />
+    <div class="empty-space"></div>
+    <section class="clearfix g-pay-lst" style="">
+      <div class="clients_info">
+          <a href="{WEB_PATH}/mobile/home/address">
+              <div class="clients_data">
+                  收货人：<span class="clients_name">{wc:$address['shouhuoren']}</span>
+                    <span class="clients_tel">{wc:$address['mobile']}</span>
+              </div>
+              <span class="arrow-right"></span>
+              <div class="clients_address">
+                  <em></em>收货地址：{wc:$address['sheng']}{wc:$address['shi']}{wc:$address['xian']}{wc:$address['jiedao']}
+                  <input type="hidden" name="uid" class="uid" value="{wc:$address['uid']}"/>
+                  <input type="hidden" name="addrId" class="addrId" value="{wc:$address['id']}"/>
+              </div>
+          </a>
+      </div>
+    </section>
+    {wc:loop $shoplist $key $val}
+    <section class="clearfix goods_li">
+        <ul>
+            {wc:php:start}
+            if(empty($val['flag'])){
+            $spec = explode(' ',$val['key_name']);
+            //var_dump($spec);exit;
+            $spec_name = $spec_value = array();
+            foreach($spec as $v){
+            $spec_arr = explode(':',$v);
+
+            $spec_name[] = $spec_arr[0].':';
+            $spec_value[] = $spec_arr[1];
+            }
+            }else{
+            $spec_name[] = '颜色分类:';
+            $spec_value[] = _strcut($val['title'],25);
+            }
+            //var_dump($spec_name);
+            {wc:php:end}
+            <li>
+                <div class="item-left">
+                    <img  class="img-responsive lazy1" src="{G_UPLOAD_PATH}/{wc:$val['goods_img']}">
+                </div>
+                <div class="item-right">
+                    <a href="{WEB_PATH}/mobile/mobile/goodsdesc/{wc:$val['goods_id']}" class="gray6">{wc:$val['title']}</a>
+                    <p class="goods_class">
+                        {wc:loop $spec_name $k $v}
+                        {wc:$v}<em>{wc:$spec_value[$k]}</em>
+                        {wc:loop:end}
+                    </p>
+                    <span class="total_price">￥<b>{wc:$val['price']}</b></span>
+                    <span class="goods_count">x<em class="shopNum">{wc:$val['cart_gorenci']}</em></span>
+                    <input type="hidden" class="shopId" name="shopId" value="{wc:$val['goods_id']}" />
+                </div>
+            </li>
+        </ul>
+    </section>
+{wc:loop:end}
+	<section class="remarks">
+		<div>
+		<span>备注：</span><input type="text" value="{wc:$remark}" name="remark">
+		</div>
+	</section>
+	<section class="pay-type">
+<!--  		    <article class="clearfix m-round g-pay-ment mybalance">
+			    <ul id="ulPayway">
+
+				 {wc:if $Money >= $MoenyCount}
+					<li class="gray9 z-pay-ye ">
+					<i id="spBalance" class="z-pay-ment" sel="0"></i>
+					<span class="themethod">余额付款<em>（账户余额：{wc:$Money} 元）</em></span>
+					</li>
+				{wc:else}
+				    <li class="gray6 z-pay-ye ">
+	          <i id="spBalance" class="z-pay-ment" sel="0"></i>
+					<a href="{WEB_PATH}/mobile/home/userrecharge" class="z-pay-Recharge">充值</a>
+					<span class="themethod">余额付款<em>（账户余额：{wc:$Money} 元）</em></span>
+					</li>
+				{wc:if:end}
+			    </ul>
+		    </article> -->
+		<article id="bankList" class="clearfix  g-bank-ct">
+		    <ul>	
+
+		    	
+		    	{wc:loop $paylist $pay}
+		    	<li class="gray9" urm="{wc:$pay['pay_id']}"><span>{wc:$pay['pay_name']}</span><i class="z-pay-ment "></i> </li>
+		    	 {wc:loop:end}
+
+		</ul>
+	    </article>
+	</section>
+	<div class="empty-space"></div>
+    <section class="payBar">
+    <span>合计：<em>￥<i id="total-price">{wc:$MoenyCount}</i></em></span>
+      <a id="btnPay" href="javascript:;" class="straight_btn">去付款</a>
+        <input type="hidden" name="orderCode" value="{wc:$orderCode}" />
+    </section>
+    
+
+<script language="javascript" type="text/javascript">
+  var Path = new Object();
+  Path.Skin="{G_TEMPLATES_STYLE}";
+  Path.Webpath = "{WEB_PATH}";
+  Path.submitcode = '{wc:$submitcode}';
+
+
+  
+  
+var Base={head:document.getElementsByTagName("head")[0]||document.documentElement,Myload:function(B,A){this.done=false;B.onload=B.onreadystatechange=function(){if(!this.done&&(!this.readyState||this.readyState==="loaded"||this.readyState==="complete")){this.done=true;A();B.onload=B.onreadystatechange=null;if(this.head&&B.parentNode){this.head.removeChild(B)}}}},getScript:function(A,C){var B=function(){};if(C!=undefined){B=C}var D=document.createElement("script");D.setAttribute("language","javascript");D.setAttribute("type","text/javascript");D.setAttribute("src",A);this.head.appendChild(D);this.Myload(D,B)},getStyle:function(A,B){var B=function(){};if(callBack!=undefined){B=callBack}var C=document.createElement("link");C.setAttribute("type","text/css");C.setAttribute("rel","stylesheet");C.setAttribute("href",A);this.head.appendChild(C);this.Myload(C,B)}}
+function GetVerNum(){var D=new Date();return D.getFullYear().toString().substring(2,4)+'.'+(D.getMonth()+1)+'.'+D.getDate()+'.'+D.getHours()+'.'+(D.getMinutes()<10?'0':D.getMinutes().toString().substring(0,1))}
+Base.getScript('{G_TEMPLATES_JS}/mobile/Bottom.js?v='+GetVerNum());
+  $(function(){
+     var wx=false;
+   var ua = navigator.userAgent.toLowerCase();  
+   if(ua.match(/MicroMessenger/i)=="micromessenger") { 
+   wx = true;
+   }
+   if(!wx){
+   	$(".gray9:contains('微信支付')").remove();
+   	
+   }
+   else{
+    $(".gray9:contains('支付宝')").remove();
+   }
+  });
+</script>
+</div>
+</body>
+</html>

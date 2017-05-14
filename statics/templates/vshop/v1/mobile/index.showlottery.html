@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en" style="height: 100%;">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta charset="utf-8">
+<title>抽奖</title>
+<link rel="stylesheet" type="text/css" href="{G_TEMPLATES_CSS}/mobile/shake.css">
+<style type="text/css">
+		body{
+			background: url('{G_TEMPLATES_IMAGE}/shakepic/countdown-bg.png') no-repeat center center;
+			background-size: 100% 100%;
+			font-size: 12px;
+			overflow: hidden;
+		}
+
+</style>
+</head>
+<body >
+	<section class="animation-bar">
+		<div class="img-change-wrap">
+			<img src="">
+		</div>
+		<div class="animation-wrap " id="myanimation">
+				<div class="animation-wrap-inner">
+				<div class="animation-item-wrap">
+<!-- 					<div class="animation-item ">
+						<img src="{G_TEMPLATES_IMAGE}/shakepic/test.jpg">
+					</div>
+					<div class="animation-item ">
+						<img src="{G_TEMPLATES_IMAGE}/shakepic/test.jpg">
+					</div>
+					<div class="animation-item ">
+						<img src="{G_TEMPLATES_IMAGE}/shakepic/test.jpg">
+					</div>
+					<div class="animation-item ">
+						<img src="{G_TEMPLATES_IMAGE}/shakepic/test.jpg">
+					</div>		
+					<div class="animation-item ">
+						<img src="{G_TEMPLATES_IMAGE}/shakepic/test.jpg">
+					</div>
+					<div class="animation-item ">
+						<img src="{G_TEMPLATES_IMAGE}/shakepic/test.jpg">
+					</div> -->
+				</div>
+				</div>
+			
+
+		</div>
+		<p class="animation-nickname"></p>
+	</section>
+	<section class="lottery-info-bar">
+		<div class="info-items-wrap">
+			<div class="info-wrap-left">
+
+			</div>
+			<div class="info-wrap-right">
+
+			</div>
+		</div>
+		
+	</section>
+
+</body>
+<script src="{G_TEMPLATES_JS}/mobile/jquery190.js" language="javascript" type="text/javascript"></script>
+
+<!-- 图片显示 -->
+<script type="text/javascript">
+window.onload = function(){
+	var lottInfos=null; //统计轮数
+	var infos = {wc:$lottery_pool};
+	var count_flag=null; //统计轮数
+	var item = null;
+	console.log(infos);
+	var wsUri = "ws://127.0.0.1:9000/server.php";
+	websocket = new WebSocket(wsUri);
+	websocket.onopen = function(ev) { // connection is open
+		console.log('connection is open');
+	}
+	//#### Message received from server?
+	websocket.onmessage = function(ev) {
+		var msg = JSON.parse(ev.data); //PHP sends Json data
+		var type = msg.type; //message type
+		var umsg = msg.message; //message text
+		item = msg.item;  //奖项id
+		var web_name = msg.web_name; //用来识别是那个页面的状态
+		var winner = msg.winner;
+		console.log(msg);
+		if(type == 'usermsg'){
+			console.log(1);
+			if(web_name == 'lottery'){
+				console.log(2);
+				console.log(item);
+				console.log(winner);
+				lottInfos = eval('('+winner+')');
+				//lottInfos = JSON.stringify(winner);
+				console.log(lottInfos);
+				console.log(typeof lottInfos);
+				main(lottInfos);
+			}
+		}
+		if(type == 'system')
+		{
+			console.log('System status -'+umsg);
+		}
+	};
+	websocket.onerror = function(ev){
+		console.log('Error Occurred -'+ev.data);
+	};
+	websocket.onclose = function(ev){
+		console.log('Client notified socket has closed',ev);
+	};
+	/*//中奖数据
+	var lottInfos = [
+					{username:'大爷',header:'{G_TEMPLATES_IMAGE}/shakepic/2.jpg'},
+					{username:'二爷',header:'{G_TEMPLATES_IMAGE}/shakepic/3.jpg'},
+					{username:'三爷',header:'{G_TEMPLATES_IMAGE}/shakepic/4.jpg'},
+					{username:'四爷',header:'{G_TEMPLATES_IMAGE}/shakepic/5.jpg'},
+					{username:'五爷',header:'{G_TEMPLATES_IMAGE}/shakepic/6.jpg'},
+					{username:'六爷',header:'{G_TEMPLATES_IMAGE}/shakepic/6.jpg'},
+					{username:'十二爷',header:'{G_TEMPLATES_IMAGE}/shakepic/6.jpg'},
+					{username:'七爷',header:'{G_TEMPLATES_IMAGE}/shakepic/6.jpg'},
+					{username:'八爷',header:'{G_TEMPLATES_IMAGE}/shakepic/6.jpg'},
+					{username:'九爷',header:'{G_TEMPLATES_IMAGE}/shakepic/6.jpg'},
+					{username:'十爷',header:'{G_TEMPLATES_IMAGE}/shakepic/6.jpg'},
+					{username:'十一爷',header:'{G_TEMPLATES_IMAGE}/shakepic/6.jpg'},
+					{username:'十三爷',header:'{G_TEMPLATES_IMAGE}/shakepic/6.jpg'},
+					{username:'十四爷',header:'{G_TEMPLATES_IMAGE}/shakepic/6.jpg'},
+					{username:'十五爷',header:'{G_TEMPLATES_IMAGE}/shakepic/6.jpg'},
+					{username:'十六爷',header:'{G_TEMPLATES_IMAGE}/shakepic/6.jpg'},
+					{username:'十七爷',header:'{G_TEMPLATES_IMAGE}/shakepic/6.jpg'},
+					{username:'十八爷',header:'{G_TEMPLATES_IMAGE}/shakepic/6.jpg'},
+					{username:'十九爷',header:'{G_TEMPLATES_IMAGE}/shakepic/6.jpg'},
+					{username:'大舅姥爷',header:'{G_TEMPLATES_IMAGE}/shakepic/6.jpg'},
+
+				];
+	//奖池数据
+	var infos = [
+				{username:'吃不胖的瘦子',header:'{G_TEMPLATES_IMAGE}/shakepic/test.jpg'},
+				{username:'大白菜',header:'{G_TEMPLATES_IMAGE}/shakepic/veg.png'},
+				{username:'大爷',header:'{G_TEMPLATES_IMAGE}/shakepic/2.jpg'},
+				{username:'二爷',header:'{G_TEMPLATES_IMAGE}/shakepic/3.jpg'},
+				{username:'三爷',header:'{G_TEMPLATES_IMAGE}/shakepic/4.jpg'},
+				{username:'四爷',header:'{G_TEMPLATES_IMAGE}/shakepic/5.jpg'},
+				{username:'五爷',header:'{G_TEMPLATES_IMAGE}/shakepic/6.jpg'}
+			  ];*/
+
+
+ 	var cenWrap = $('.img-change-wrap');//图片框
+ 	var nameWrap = $('.animation-nickname')//昵称框
+ 	// console.log(lottInfos.length);
+	var count = 0; //显示中奖人的次数
+	var div = null;
+	var divR = null;
+	var timer = null;
+
+	//显示中间头像
+	change();
+	//main();
+
+function main( lottInfos ) {
+
+	console.log(lottInfos.length);
+	// 获奖信息区Dom
+
+		for (var i = 0; i < lottInfos.length; i = i + 2) {
+			console.log('run');
+
+			if (lottInfos.length <= 10) {
+
+				if (i == lottInfos.length - 1) {
+					div = '<div class="info-item-goup"><div class="info-item-left info-item">';
+					div += '<p class="info-nickname">' + lottInfos[i].username + '</p><div class="img-outer-wrap"><div class="img-inner-wrap">';
+					div += '<img class="info-headimg" src="' + lottInfos[i].header + '">';
+					div += '</div></div></div></div>';
+
+				}
+				else {
+					div = '<div class="info-item-goup"><div class="info-item-left info-item">';
+					div += '<p class="info-nickname">' + lottInfos[i].username + '</p><div class="img-outer-wrap"><div class="img-inner-wrap">';
+					div += '<img class="info-headimg" src="' + lottInfos[i].header + '">';
+					div += '</div></div></div>';
+					div += '<div class="info-item-right info-item">';
+					div += '<p class="info-nickname">' + lottInfos[i + 1].username + '</p><div class="img-outer-wrap"><div class="img-inner-wrap">';
+					div += '<img class="info-headimg" src="' + lottInfos[i + 1].header + '">';
+					div += '</div></div></div></div>';
+				}
+				$('.info-wrap-left').append(div);
+
+			}
+			else {
+				if (i < 10) {
+
+					div = '<div class="info-item-goup"><div class="info-item-left info-item">';
+					div += '<p class="info-nickname">' + lottInfos[i].username + '</p><div class="img-outer-wrap"><div class="img-inner-wrap">';
+					div += '<img class="info-headimg" src="' + lottInfos[i].header + '">';
+					div += '</div></div></div>';
+					div += '<div class="info-item-right info-item">';
+					div += '<p class="info-nickname">' + lottInfos[i + 1].username + '</p><div class="img-outer-wrap"><div class="img-inner-wrap">';
+					div += '<img class="info-headimg" src="' + lottInfos[i + 1].header + '">';
+					div += '</div></div></div></div>';
+
+					$('.info-wrap-left').append(div);
+
+				}
+				else {
+					if (i == lottInfos.length - 1) {
+
+						divR = '<div class="info-item-goup"><div class="info-item-left info-item">';
+						divR += '<p class="info-nickname">' + lottInfos[i].username + '</p><div class="img-outer-wrap"><div class="img-inner-wrap">';
+						divR += '<img class="info-headimg" src="' + lottInfos[i].header + '">';
+						divR += '</div></div></div></div>';
+
+					}
+					else {
+						divR = '<div class="info-item-goup"><div class="info-item-left info-item">';
+						divR += '<p class="info-nickname">' + lottInfos[i].username + '</p><div class="img-outer-wrap"><div class="img-inner-wrap">';
+						divR += '<img class="info-headimg" src="' + lottInfos[i].header + '">';
+						divR += '</div></div></div>';
+						divR += '<div class="info-item-right info-item">';
+						divR += '<p class="info-nickname">' + lottInfos[i + 1].username + '</p><div class="img-outer-wrap"><div class="img-inner-wrap">';
+						divR += '<img class="info-headimg" src="' + lottInfos[i + 1].header + '">';
+						divR += '</div></div></div></div>';
+						$('.info-wrap-right').append(divR);
+
+					}
+
+				}
+
+
+			}
+
+
+		}
+
+	//判断右边是否为空，单排居中
+	var len = $('.info-wrap-right').children().length;
+	if (!len) {
+		$('.info-wrap-right').remove();
+		$('.info-wrap-left').css('margin', '0 auto');
+	}
+	else {
+		$('.info-wrap-right').css('float', 'right');
+		$('.info-wrap-left').css('float', 'left');
+	}
+
+	// 图片滚动区Dom
+	for (var i in infos) {
+		var dom = '<div class="animation-item ">';
+		dom += '<img src="' + infos[i].header + '"/></div>';
+		$('.animation-item-wrap').append(dom);
+	}
+
+	var itemNum = $('.animation-item ').length;
+	var aniItem = $('.animation-item-wrap');
+	var posL = 0;
+	aniItem.width(itemNum * 124);
+
+
+//动画定时器
+	//if (count_flag) {
+		console.log(7);
+		imgRun();
+		timer = setInterval(function () {
+			// imgMove();
+			change();
+
+		}, 100);
+
+		showInfo(lottInfos);
+	//}
+
+
+}
+//中奖信息
+	function showInfo(lottInfos){
+		console.log(lottInfos)
+			if(lottInfos.length == 1){
+
+				setTimeout(function(){
+					imgStop();
+					clearInterval(timer);
+					cenWrap.find('img').attr('src',lottInfos[count].header);
+					nameWrap.text(lottInfos[count].username);
+
+					$('.info-item').each(function(){
+
+						var na = $(this).find('.info-nickname').text();
+						if(na === lottInfos[count].username){
+							$(this).show('slow');
+						}
+					})
+				},2000);
+
+				return false;
+
+
+			}
+			else {
+
+		    if (count < lottInfos.length-1){
+				console.log(count);
+				setTimeout(function(){
+					imgStop();
+					clearInterval(timer);
+					cenWrap.find('img').attr('src',lottInfos[count].header);
+					nameWrap.text(lottInfos[count].username);
+
+					$('.info-item').each(function(){
+
+						var na = $(this).find('.info-nickname').text();
+						if(na === lottInfos[count].username){
+							$(this).show('slow',function(){
+								imgRun();
+								timer = setInterval(function(){
+									// imgMove();
+									change();
+
+								},100);
+							});
+						}
+					})
+
+					showInfo(lottInfos);
+					count++;
+				},2000);
+
+			}
+			else{
+				setTimeout(function(){
+
+					imgStop();
+					clearInterval(timer);
+				},2000);
+
+			}
+
+			}
+
+	}
+
+
+		
+
+
+
+//中间图片展示
+	function change(){
+
+		var i = Math.floor(Math.random() * infos.length);
+		var nikeName = infos[i].username,
+			headerUrl = infos[i].header;
+			cenWrap.find('img').attr('src',headerUrl);
+			nameWrap.text(nikeName);
+
+
+	}
+}
+
+function imgRun(){
+	$('.animation-item-wrap').addClass('animation-run');
+}
+function imgStop(){
+	$('.animation-item-wrap').removeClass('animation-run');
+
+}
+
+		
+
+
+</script>
+</html>

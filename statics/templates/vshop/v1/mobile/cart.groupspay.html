@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+    <title>确认订单</title>
+    <meta content="app-id=518966501" name="apple-itunes-app" />
+    <meta content="yes" name="apple-mobile-web-app-capable" />
+    <meta content="black" name="apple-mobile-web-app-status-bar-style" />
+    <meta content="telephone=no" name="format-detection" />
+    <meta http-equiv="Cache-Control" content="no-cache" />
+    <meta http-equiv="pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="-1">
+    <!-- <link rel="stylesheet" media="screen,projection,tv" href="{G_TEMPLATES_CSS}/mobile/main.css"> -->
+    <link href="{G_TEMPLATES_CSS}/mobile/comm.css" rel="stylesheet" type="text/css" /><link href="{G_TEMPLATES_CSS}/mobile/cartList.css" rel="stylesheet" type="text/css" />
+
+	<script src="{G_TEMPLATES_JS}/mobile/jquery190.js" language="javascript" type="text/javascript"></script>
+	<script id="pageJS" data="{G_TEMPLATES_JS}/mobile/Payment.js" language="javascript" type="text/javascript"></script>
+
+	<!-- <script src="{G_TEMPLATES_JS}/mobile/straight.js" language="javascript" type="text/javascript"></script> -->
+<style>
+/*S 2016.9.20  商品选择页*/
+.selectBar-wrap{
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    left: 0;
+    bottom: 0;
+    background-color: rgba(0,0,0,0.5);
+    z-index: 10000;
+    display: none;
+    margin-bottom: 50px;
+}
+.selectBar{
+    position:absolute;
+    width: 100%;
+    left: 0;
+    bottom: 0;
+    background-color: #fff;
+    z-index: 1000001;
+    
+    
+}
+.goodsInfo{
+    width: 100%;
+    padding: 0 15px;
+}
+.goodsInfo-wrap{
+    color: #000;
+}
+.goodsInfo-img{
+    width: 28%;
+    border: 1px solid #999;
+    top: -20px;
+    left: 0px;
+    background-color: #fff;
+    position: relative;
+    overflow: hidden;
+    float: left;
+
+}
+.goodsInfo-img img{
+    
+    
+    width: 100%;
+}
+.goodsInfo-detail{
+    width: 70%;
+    float: right;
+    padding-left: 10px;
+    font-size: 15px;
+    padding-top: 10px;
+
+}
+.goodsInfo-detail p{
+    margin: 0;
+}
+.detail-price{
+    color: #007ad8;
+    font-size: 16px;
+    font-family: 'Microsoft yahei';
+}
+.goodsClass{
+    clear: both;
+    padding: 0 15px;
+    min-height:100px;
+}
+.goodsClass-wrap{
+    border-top:1px solid #999;
+}
+.goodsClass h3{
+    font-size: 14px;
+    margin: 0;
+    line-height: 30px;
+}
+.goodsClass-list{
+    max-height: 130px;
+    overflow: auto;
+    
+}
+.goodsClass-list li{
+    margin:0 3px 5px 0; 
+    padding: 5px 8px;
+    display: inline-block;
+    background-color: #eee;
+    border-radius: 15px;
+    font-size: 12px;
+}
+.classSel{
+    background-color: #007ad8 !important;
+    color: #fff;
+}
+.sellOut{
+    color: #999;
+    cursor: default;
+}
+.goodsNums{
+    clear: both;
+    padding: 0 15px;
+    overflow: hidden;
+}
+.goodsNums-wrap{
+    border-top:1px solid #999;
+    border-bottom: 1px solid #999;
+    overflow: hidden;
+    height: 40px;
+
+}
+.goodsNums-wrap h3{
+    float: left;
+    font-size: 14px;
+    margin: 0;
+    line-height: 40px;
+
+}
+.numSelBar{
+    float: right;
+    display: inline-block;
+    height: 100%;
+}
+.numSelBar a{
+    display: inline-block;
+    height: 30px;
+    width: 30px;
+    background-color: #eee;
+    margin-top: 5px;
+    text-align: center;
+    line-height: 30px;
+    font-size: 18px;
+}
+.numSelBar a:hover{
+    color: #000 !important;
+}
+.numSelBar span{
+    display: inline-block;
+    text-align: center;
+    font-size: 16px;
+    min-width: 20px;
+}
+.theBtns{
+    width: 100%;
+    height: 45px;
+    
+}
+
+
+.theBtns .online, .theBtns .tel {
+    border-top: 1px solid #C9C9C9;
+    display: inline-block;
+    width: 15%;
+    height: 100%;
+    float: left;
+    text-align: center;
+    padding-top: 3px;
+}
+
+.theBtns .online .online-bg {
+    display: block;
+    height: 25px;
+    width: 25px;
+    margin: 0 auto;
+    background-image: url(../../images/shop/hotLine.png);
+    background-size: 70px 25px;
+    background-position: -40px 0;
+}
+
+.theBtns .tel .tel-bg {
+    display: block;
+    height: 25px;
+    width: 25px;
+    margin: 0 auto;
+    background-image: url(../../images/shop/hotLine.png);
+    background-size: 70px 25px;
+    background-position: -6px 0;
+}
+
+.theBtns .parchase,.theBtns .addto,.theBtns .addGroup {
+    display: inline-block;
+    width: 35%;
+    height: 100%;
+    float: left;
+    line-height: 45px;
+    text-align: center;
+    font-size: 20px;
+    color: #fff;
+}
+.theBtns .parchase{
+    background-color:#007AD8; 
+
+
+}
+.theBtns .addto, .theBtns .addGroup {
+
+    background-color:#0090FF; 
+
+}
+.theBtns .submitBtn{
+    background-color: #ff464e;
+    display: inline-block;
+    width: 100%;
+    height: 100%;
+    line-height: 45px;
+    text-align: center;
+    font-size: 20px;
+    color: #fff;
+}
+#selectGBar-close{
+    display: inline-block;
+    height: 20px;
+    width: 20px;
+    background:url(../../images/shop/close.png) no-repeat center center;
+    position: absolute;
+    background-size: 100% 100%;
+    right: 4%;
+    top: 3%;
+}
+.detail-last{
+    line-height:28px;
+}
+#divGoodsNav .priceOrder{
+    right:28%;
+    width: 20%;
+}
+</style>
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?3467e923fe63a9c0d612efb4d9309c8d";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+<script>
+    $(function () {
+        //通过ajax请求判断用户是否已经添加地址
+        $.ajax({
+          type:'get',
+          url:'{WEB_PATH}/mobile/ajax/getTip/',
+          cache:false,
+          dataType:'json',
+          success:function(data){
+            //alert(data.flag);
+            if(data.flag == 1){
+                //用户已经登录且填写了地址
+                addrHtml = '<a href="{WEB_PATH}/mobile/home/address">';
+                addrHtml += '<div class="clients_data">收货人：<span class="clients_name">'+data.address['shouhuoren']+'</span>';
+                addrHtml += '<span class="clients_tel">'+data.address['mobile']+'</span></div>';
+                addrHtml += '<span class="arrow-right"></span>';
+                addrHtml += '<div class="clients_address"><em></em>收货地址：'+data.address['sheng']+data.address['shi']+data.address['xian']+data.address['jiedao'];
+                addrHtml += '<input type="hidden" name="uid" class="uid" value="'+data.address['uid']+'"/>';
+                addrHtml += '<input type="hidden" name="addrId" class="addrId" value="'+data.address['id']+'"/>';
+                addrHtml += '</div></a>'
+                $('.address').hide();
+                $('.clients_info').append(addrHtml);
+            }else{
+                $('.dialog-comfirm').show();
+                $('a.know').click(function(){
+                  $('.dialog-comfirm').hide();
+                })
+            }
+        }
+        });
+
+     });
+</script>
+</head>
+<body style="height:100%;" >
+<div class="h5-1yyg-v1">
+    
+<!-- 栏目页面顶部 -->
+
+
+<!-- 内页顶部 -->
+
+    <header class="g-header">
+        <div class="head-l">
+	        <a href="javascript:;" onclick="history.go(-1)" class="z-HReturn"></a>
+        </div>
+        <h2>确认订单</h2>
+
+    </header>
+    <input name="hidShopMoney" type="hidden" id="hidShopMoney" value="{wc:$MoneyCount}" />
+    <input name="hidBalance" type="hidden" id="hidBalance" value="{wc:$Money}" />
+    <input name="hidPoints" type="hidden" id="hidPoints" value="{wc:$member['score']}" />
+    <input name="shopnum" type="hidden" id="shopnum" value="{wc:$shopnum}" />
+    <input name="pointsbl" type="hidden" id="pointsbl" value="{wc:$fufen_dikou}" />
+    <div class="empty-space"></div>
+    <!-- <section class="clearfix g-pay-lst" style="">
+      <div class="clients_info">
+          <a href="{WEB_PATH}/mobile/home/address" class="address add-addr"><span>+</span>添加地址</a>
+      </div>
+    </section> -->
+    {wc:loop $shoplist $key $val}
+    <section class="clearfix goods_li">
+        <ul>
+            {wc:php:start}
+            if(empty($val['flag'])){
+            $spec = explode(' ',$val['key_name']);
+            //var_dump($spec);exit;
+            $spec_name = $spec_value = array();
+            foreach($spec as $v){
+            $spec_arr = explode(':',$v);
+
+            $spec_name[] = $spec_arr[0].':';
+            $spec_value[] = $spec_arr[1];
+            }
+            }else{
+            $spec_name[] = '颜色分类:';
+            $spec_value[] = _strcut($val['title'],25);
+            }
+            //var_dump($spec_name);
+            {wc:php:end}
+            <li>
+                <div class="item-left">
+                    <img  class="img-responsive lazy1" src="{G_UPLOAD_PATH}/{wc:$val['goods_img']}">
+                </div>
+                <div class="item-right">
+                    <a href="{WEB_PATH}/mobile/mobile/goodsdesc/{wc:$val['goods_id']}" class="gray6">{wc:$val['title']}</a>
+                    <p class="goods_class">
+                        {wc:loop $spec_name $k $v}
+                        {wc:$v}<em>{wc:$spec_value[$k]}</em>
+                        {wc:loop:end}
+                    </p>
+                    <span class="total_price">￥<b>{wc:$val['price']}</b></span>
+                    <span class="goods_count">x<em class="shopNum">{wc:$val['cart_gorenci']}</em></span>
+                    <input type="hidden" class="shopId" name="shopId" value="{wc:$val['goods_id']}" />
+                </div>
+            </li>
+        </ul>
+    </section>
+{wc:loop:end}
+
+
+    <!-- 页面参团部分 -->
+    <div class="groupPay">去参团按钮进入页面
+        <div class="members">
+            <ul>
+                <li><span>团长</span></li>
+                <li></li>
+            </ul>
+        </div>
+        <div class="number">
+            <p>还差<span>1</span>人</p>
+        </div>
+        <div class="time"><span class="a"></span>
+            <p>剩余<span>20</span>:<span>20</span>:<span>20</span>结束</p>
+        </div>
+    </div>
+    <section class="remarks">
+        <div>
+            <span>买家留言：</span><input type="text" name="remark" placeholder="选填，对本次交易的说明">
+        </div>
+    </section>
+    <section class="pay-type">
+                <!--此处id可能要修改-->
+        <article id="bankList" class="clearfix  g-bank-ct">
+            <ul>
+                {wc:loop $paylist $pay}
+                <li class="gray9" urm="{wc:$pay['pay_id']}"><span>{wc:$pay['pay_name']}</span><i class="z-pay-ment "></i></li>
+                {wc:loop:end}
+            </ul>
+        </article>
+    </section> 
+
+
+	<div class="empty-space"></div>
+    <section class="payBar">
+        <span>合计：<em>￥<i id="total-price">{wc:$MoneyCount}</i></em></span>
+        <!-- <a id="btnPay" href="javascript:;" class="straight_btn">去付款</a> -->
+        <a id="btnJoin" href="javascript:;" class="straight_btn" codeid="">我也要参团</a>
+    </section>
+    
+    <div class="dialog-comfirm" style="display: none;">
+        <div class="dialog-addr">
+            <h2>提示</h2>
+            <p id="tip">确认订单前请完善您的收货地址</p>
+            <div class="dialog-option">
+                <a href="javascript:;" class="know">我知道了</a>
+                <a href="{WEB_PATH}/mobile/home/address" class="add-addr">添加地址</a>
+            </div>
+        </div>
+    </div>
+
+
+    <!--参团页面商品选项-->
+    <div class="selectBar-wrap">
+        <div class="selectBar">
+            <a id="selectGBar-close" href="javascript:;"></a>
+            <div class="goodsInfo">
+                <div class="goodsInfo-wrap">
+                    <div class="goodsInfo-img">
+                        <script src="http://taoer.com/statics/templates/vshop/js/mobile/goodsselect.js" type="text/javascript"></script>
+                        <input type="hidden" class="shopId" value="71">
+                        <img src="http://taoer.com/statics/uploads/shopimg/20160708/73647072953331.jpg" alt="goodsImg">
+                    </div>
+                    <div class="goodsInfo-detail">
+                        <p class="detail-price">￥<span>58.00</span></p>
+                        <p class="detail-last">库存：<span>10</span>件</p>
+                        <p class="detail-selected">请选择：<span>颜色分类</span></p>
+                    </div>
+                </div>
+            </div>
+            <div class="goodsClass">
+                <div class="goodsClass-wrap"><h3>颜色分类</h3>
+                    <ul class="goodsClass-list" id="goodsSpec-">
+                        <li title="网易游戏印象&nbsp;卖萌系列之游戏表情" data-src="shopimg/20160708/73647072953331.jpg" data-id="71">网易游戏印象&nbsp;卖萌系...</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="goodsNums">
+            <div class="goodsNums-wrap">
+                <h3>购买数量</h3>
+                <div class="numSelBar"><a href="javascript:;" id="Less">-</a><span id="nums">1</span><a href="javascript:;" id="More">+</a>
+                </div>
+            </div>
+            </div>
+            <section class="payBar">
+                <span>合计：<em>￥<i id="total-price">58.00</i></em></span>
+                <!-- <a id="btnPay" href="javascript:;" class="straight_btn">去付款</a> -->
+                <a id="btnGpay" href="javascript:;" class="straight_btn">支付</a>
+            </section>
+        </div>
+    </div>
+    <!--end-->
+
+<script language="javascript" type="text/javascript">
+  var Path = new Object();
+  Path.Skin="{G_TEMPLATES_STYLE}";
+  Path.Webpath = "{WEB_PATH}";
+  Path.submitcode = '{wc:$submitcode}';
+
+
+  
+  
+var Base={head:document.getElementsByTagName("head")[0]||document.documentElement,Myload:function(B,A){this.done=false;B.onload=B.onreadystatechange=function(){if(!this.done&&(!this.readyState||this.readyState==="loaded"||this.readyState==="complete")){this.done=true;A();B.onload=B.onreadystatechange=null;if(this.head&&B.parentNode){this.head.removeChild(B)}}}},getScript:function(A,C){var B=function(){};if(C!=undefined){B=C}var D=document.createElement("script");D.setAttribute("language","javascript");D.setAttribute("type","text/javascript");D.setAttribute("src",A);this.head.appendChild(D);this.Myload(D,B)},getStyle:function(A,B){var B=function(){};if(callBack!=undefined){B=callBack}var C=document.createElement("link");C.setAttribute("type","text/css");C.setAttribute("rel","stylesheet");C.setAttribute("href",A);this.head.appendChild(C);this.Myload(C,B)}}
+function GetVerNum(){var D=new Date();return D.getFullYear().toString().substring(2,4)+'.'+(D.getMonth()+1)+'.'+D.getDate()+'.'+D.getHours()+'.'+(D.getMinutes()<10?'0':D.getMinutes().toString().substring(0,1))}
+Base.getScript('{G_TEMPLATES_JS}/mobile/Bottom.js?v='+GetVerNum());
+    $(function(){
+        var wx=false;
+        var ua = navigator.userAgent.toLowerCase();
+        if(ua.match(/MicroMessenger/i)=="micromessenger"){
+            wx = true;
+        }
+        if(!wx){
+            $(".gray9:contains('微信支付')").remove();
+        }else{
+            $(".gray9:contains('支付宝')").remove();
+        }
+    });
+
+    /*$(document).on("click",'#btnGpay',function(){
+        var codeid=$(this).attr('codeid');
+        $.getJSON('{WEB_PATH}/mobile/ajax/goodsSelect/'+codeid+'/'+1,function(data){
+            $("body").append(data);
+            $('.selectBar-wrap').slideDown();
+        });
+        $('.selectBar-wrap').css({display:'block'}).slideUp();
+    });*/
+    $(document).on("click",'#btnJoin',function(){
+        var codeid=$(this).attr('codeid');
+        //alert(codeid);
+        $.getJSON('{WEB_PATH}/mobile/ajax/goodsSelect/'+codeid+'/'+4,function(data){
+            $("body").append(data);
+            $('.selectBar-wrap').slideDown();
+        });
+        /*$('.selectBar-wrap').slideDown();*/
+    });
+    /*$(document).on("click",'#selectGBar-close',function(){
+        var codeid=$(this).attr('codeid');
+        $.getJSON('{WEB_PATH}/mobile/ajax/goodsSelect/'+codeid+'/'+1,function(data){
+            $("body").append(data);
+            $('.selectBar-wrap').slideDown();
+        });
+        $('.selectBar-wrap').slideUp();
+    });*/
+    
+</script>
+</div>
+</body>
+</html>

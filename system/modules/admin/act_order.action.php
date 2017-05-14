@@ -53,7 +53,7 @@ class act_order extends admin {
         if(isset($_GET['p'])){$pagenum=$_GET['p'];}else{$pagenum=1;}
         $page->config($total,$num,$pagenum,"0");
         $sql = "select * from `@#_act_order` WHERE $where";
-        $orderInfo = $this->db->GetPage($sql);
+        $orderInfo = $this->db->GetPage($sql, array('num' => $num, 'page' => $pagenum));
         foreach ($orderInfo as $k => $v){
             switch ($v['o_refund_status']){
                 case 0:

@@ -401,7 +401,7 @@ HTML;
         if(isset($_GET['p'])){$pagenum=$_GET['p'];}else{$pagenum=1;}
         $page->config($total,$num,$pagenum,"0");
         $sql = "select * from `@#_activity` WHERE ".$list_where." ORDER BY `act_time` DESC";
-        $act_info = $this->db->GetPage($sql,array('key'=>'act_id'));
+        $act_info = $this->db->GetPage($sql,array('key'=>'act_id', 'num' => $num, 'page' => $pagenum));
         $act_key = implode(',',array_keys($act_info));
         //p($act_key);
         //echo '<pre>';

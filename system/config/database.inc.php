@@ -3,7 +3,7 @@ return array(
 
 	'default' => array (
 
-		'hostname' => 'localhost',
+		'hostname' => '127.0.0.1',
 
 		'database' => 'outmall',
 
@@ -15,7 +15,7 @@ return array(
 
 		'charset' => 'utf8',
 
-		'type' => 'mysqli',
+		'type' => 'mysql',
 
 		'debug' => false,
 

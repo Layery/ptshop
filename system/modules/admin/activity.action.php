@@ -269,6 +269,7 @@ HTML;
      * 活动报名详细表
      */
     public function signListDetail(){
+
         //获取活动id
         $act_id = intval($this->segment(4));
         if(empty($act_id)){
@@ -281,7 +282,6 @@ HTML;
         $page->config($total,$num,$pagenum,"0");
         $sql = "select * from `@#_act_sign` a LEFT JOIN `@#_act_order` b ON a.`s_id` = b.`o_sid` WHERE a.`s_act_id`=$act_id AND a.`s_status`='已支付'";
         $signInfo = $this->db->GetPage($sql);
-        //p($signInfo);exit;
         include $this->tpl(ROUTE_M,'activity.signListDetail');
     }
     /**
@@ -313,16 +313,18 @@ HTML;
         $objActSheet -> setCellValue('A2','ID')
             -> setCellValue('B2','活动主题')
             -> setCellValue('C2','报名人')
-            -> setCellValue('D2','联系电话')
-            -> setCellValue('E2','身份证号');
+            -> setCellValue('D2','微信昵称')
+            -> setCellValue('E2','联系电话')
+            -> setCellValue('F2','身份证号');
         if($signList){
             $i = 3;
             foreach ($signList as $v){
                 $objActSheet -> setCellValue('A'.$i,$v['s_id'])
                     -> setCellValue('B'.$i,$v['o_act_title'])
                     -> setCellValue('C'.$i,$v['s_username'])
-                    -> setCellValue('D'.$i,' '.$v['s_mobile'])
-                    -> setCellValue('E'.$i,' '.$v['s_ID_card']);
+                    -> setCellValue('D'.$i,$v['o_username'])
+                    -> setCellValue('E'.$i,' '.$v['s_mobile'])
+                    -> setCellValue('F'.$i,' '.$v['s_ID_card']);
                 $i++;
             }
         }

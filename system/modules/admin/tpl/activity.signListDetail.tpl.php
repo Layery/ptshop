@@ -75,6 +75,7 @@ img:hover{
                     <th width="20%">活动主题</th>
                     <th width="5%">报名人</th>
                     <th width="5%">报名人头像</th>
+                    <th width="10%">微信昵称</th>
                     <th width="20%">联系方式</th>
                     <th width="20%">身份证</th>
                     <th width="10%">支付状态</th>
@@ -91,6 +92,7 @@ img:hover{
                 <td><?php echo _strcut($v['o_act_title'],45);?></td>
                 <td><?php echo $v['s_username']?></td>
                 <td><img src="<?php echo $v['o_photo']?>" alt="用户头像"></td>
+                <td><?php echo $v['o_username']?></td>
                 <td><?php echo $v['s_mobile']?></td>
                 <td><?php echo $v['s_ID_card']?></td>
                 <td><?php echo $v['s_status']?></td>
